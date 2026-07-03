@@ -105,10 +105,9 @@ enum BMXPainter {
         let baseY = h * 0.72
         let camX = e.x - w * 0.3
 
-        // céu e serra em parallax
-        ctx.fill(Path(CGRect(origin: .zero, size: size)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0x8FC4DB), Color(hex: 0xD7EBDF)]),
-                                       startPoint: .zero, endPoint: CGPoint(x: 0, y: h * 0.7)))
+        // céu em faixas + serra em parallax
+        GamePaint.bands(&ctx, rect: CGRect(origin: .zero, size: size),
+                        colors: [Color(hex: 0x8FC4DB), Color(hex: 0xB0D8DC), Color(hex: 0xD7EBDF)])
         var hills = Path()
         hills.move(to: CGPoint(x: 0, y: h * 0.55))
         for sx in stride(from: 0.0, through: Double(w), by: 24) {
@@ -170,8 +169,8 @@ enum BMXPainter {
 
         // instrução de flip quando no ar
         if e.airborne {
-            ctx.draw(Text(e.holding ? "🔄 girando…" : "segure p/ girar")
-                .font(.system(size: 15, weight: .bold, design: .rounded))
+            ctx.draw(Text(e.holding ? "GIRANDO…" : "SEGURE P/ GIRAR")
+                .font(Theme.px(9))
                 .foregroundColor(Theme.creme),
                      at: CGPoint(x: px, y: py - 70), anchor: .center)
         }

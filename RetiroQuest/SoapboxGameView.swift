@@ -109,10 +109,9 @@ enum SoapboxPainter {
     static func draw(_ e: SoapboxEngine, _ ctx: inout GraphicsContext, _ size: CGSize) {
         let w = size.width, h = size.height
 
-        // céu e serra no horizonte
-        ctx.fill(Path(CGRect(x: 0, y: 0, width: w, height: h * 0.30)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0x8FC4DB), Color(hex: 0xD7EBDF)]),
-                                       startPoint: .zero, endPoint: CGPoint(x: 0, y: h * 0.3)))
+        // céu em faixas e serra no horizonte
+        GamePaint.bands(&ctx, rect: CGRect(x: 0, y: 0, width: w, height: h * 0.30),
+                        colors: [Color(hex: 0x8FC4DB), Color(hex: 0xB0D8DC), Color(hex: 0xD7EBDF)])
         ctx.fill(Path { p in
             p.move(to: CGPoint(x: 0, y: h * 0.30))
             p.addQuadCurve(to: CGPoint(x: w, y: h * 0.30), control: CGPoint(x: w * 0.4, y: h * 0.2))
@@ -140,10 +139,17 @@ enum SoapboxPainter {
                      with: .color(Color(hex: 0xC9B091)))
         }
 
-        // obstáculos (de trás para frente)
+        // obstáculos (de trás para frente, sprites pixel)
         for o in e.obstacles.sorted(by: { $0.z > $1.z }) where o.z > 0 {
             let (p, s) = e.project(o, size: size)
-            GamePaint.emoji(&ctx, o.emoji, at: p, size: 20 + s * 40)
+            let sprite: [String]
+            switch o.emoji {
+            case "🚧": sprite = Px.cone
+            case "🪨": sprite = Px.rock
+            case "🐕": sprite = Px.dog
+            default: sprite = Px.cart
+            }
+            Px.draw(&ctx, sprite, at: p, pixel: (20 + s * 40) / 8)
         }
 
         // carrinho do jogador

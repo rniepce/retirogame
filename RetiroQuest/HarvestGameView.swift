@@ -95,10 +95,9 @@ enum HarvestPainter {
     static func draw(_ e: HarvestEngine, _ ctx: inout GraphicsContext, _ size: CGSize) {
         let w = size.width, h = size.height
 
-        // quintal da casa do ipê
-        ctx.fill(Path(CGRect(origin: .zero, size: size)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0xA8D4E4), Color(hex: 0xD7EBDF)]),
-                                       startPoint: .zero, endPoint: CGPoint(x: 0, y: h * 0.7)))
+        // quintal da casa do ipê (céu em faixas)
+        GamePaint.bands(&ctx, rect: CGRect(x: 0, y: 0, width: w, height: h * 0.68),
+                        colors: [Color(hex: 0xA8D4E4), Color(hex: 0xC0E0E2), Color(hex: 0xD7EBDF)])
         ctx.fill(Path(CGRect(x: 0, y: h * 0.68, width: w, height: h * 0.32)),
                  with: .color(Color(hex: 0x7FA85E)))
 
@@ -138,8 +137,8 @@ enum HarvestPainter {
         }
 
         // cesta
-        GamePaint.emoji(&ctx, "🧺", at: CGPoint(x: w * 0.82, y: h * 0.8), size: 54)
-        ctx.draw(Text("\(e.picked)").font(.system(size: 20, weight: .heavy, design: .rounded))
+        Px.draw(&ctx, Px.basket, at: CGPoint(x: w * 0.82, y: h * 0.8), pixel: 5.4)
+        ctx.draw(Text("\(e.picked)").font(Theme.px(12))
             .foregroundColor(Theme.creme),
                  at: CGPoint(x: w * 0.82, y: h * 0.88), anchor: .center)
 

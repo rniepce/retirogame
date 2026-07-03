@@ -25,20 +25,15 @@ struct AvatarCreatorView: View {
                 .padding(.bottom, 8)
 
                 ZStack {
-                    Circle()
-                        .fill(
-                            RadialGradient(colors: [Theme.creme, Color(hex: 0xE8D8B0)],
-                                           center: .init(x: 0.5, y: 0.38),
-                                           startRadius: 10, endRadius: 110)
-                        )
+                    Circle().fill(Theme.creme)
                     AvatarView(config: draft)
                         .frame(width: 128, height: 148)
                         .offset(y: 14)
                 }
                 .frame(width: 172, height: 172)
                 .clipShape(Circle())
-                .overlay(Circle().stroke(Theme.creme, lineWidth: 5))
-                .shadow(color: Theme.tinta.opacity(0.18), radius: 12, y: 8)
+                .overlay(Circle().stroke(Theme.tinta, lineWidth: 4))
+                .background(Circle().fill(Theme.tinta).offset(x: 4, y: 6))
                 .padding(.bottom, 6)
 
                 ScrollView {

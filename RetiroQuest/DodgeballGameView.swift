@@ -92,10 +92,9 @@ enum DodgeballPainter {
     static func draw(_ e: DodgeballEngine, _ ctx: inout GraphicsContext, _ size: CGSize) {
         let w = size.width, h = size.height
 
-        // quadra descoberta
-        ctx.fill(Path(CGRect(origin: .zero, size: size)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0x4E8F5C), Color(hex: 0x3F7A4C)]),
-                                       startPoint: .zero, endPoint: CGPoint(x: 0, y: h)))
+        // quadra descoberta (faixas chapadas)
+        GamePaint.bands(&ctx, rect: CGRect(origin: .zero, size: size),
+                        colors: [Color(hex: 0x4E8F5C), Color(hex: 0x478554), Color(hex: 0x3F7A4C)])
         var lines = Path()
         lines.addRect(CGRect(x: w * 0.06, y: h * 0.1, width: w * 0.88, height: h * 0.82))
         lines.move(to: CGPoint(x: w * 0.06, y: h * 0.5)); lines.addLine(to: CGPoint(x: w * 0.94, y: h * 0.5))
@@ -117,7 +116,7 @@ enum DodgeballPainter {
         for b in e.balls where b.t <= 1 {
             let x = w * (b.fromX + (b.targetX - b.fromX) * b.t)
             let y = h * 0.22 + (h * 0.8 - h * 0.22) * b.t - sin(b.t * .pi) * h * 0.1
-            GamePaint.emoji(&ctx, "🥎", at: CGPoint(x: x, y: y), size: 18 + b.t * 26)
+            Px.draw(&ctx, Px.softball, at: CGPoint(x: x, y: y), pixel: (18 + b.t * 26) / 8)
         }
 
         // jogador (pisca quando invulnerável)

@@ -63,9 +63,8 @@ enum VolleyPainter {
         let w = size.width, h = size.height
 
         // ginásio: parede, telhado e piso de quadra
-        ctx.fill(Path(CGRect(origin: .zero, size: size)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0xEFE7D6), Color(hex: 0xDDD2B8)]),
-                                       startPoint: .zero, endPoint: CGPoint(x: 0, y: h)))
+        GamePaint.bands(&ctx, rect: CGRect(origin: .zero, size: size),
+                        colors: [Color(hex: 0xEFE7D6), Color(hex: 0xE6DCC7), Color(hex: 0xDDD2B8)])
         var beams = Path()
         for i in 0..<5 {
             let y = h * 0.06 + Double(i) * h * 0.045
@@ -111,7 +110,7 @@ enum VolleyPainter {
             let tc = max(0, min(1.1, t))
             let x = -30 + (contact.x + 30) * tc
             let y = h * 0.72 + (contact.y - h * 0.72) * tc - sin(min(tc, 1) * .pi) * h * 0.26
-            GamePaint.emoji(&ctx, "🏐", at: CGPoint(x: x, y: y), size: 44)
+            Px.draw(&ctx, Px.volleyball, at: CGPoint(x: x, y: y), pixel: 5.5)
         }
     }
 }

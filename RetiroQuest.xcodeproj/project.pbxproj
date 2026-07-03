@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		046A721B8B5EDD7E03102D48 /* Chip8Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = C04DB20A06F24181D26AD9F0 /* Chip8Audio.swift */; };
 		0B671F290F9BAA3A7CD5D72A /* RetiroQuestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF0F1BD19E19E9A2E369EE2 /* RetiroQuestApp.swift */; };
 		10AF0144C8F5E4ADD8E77456 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4821A1EFEA588DEB7B89B7AB /* Assets.xcassets */; };
 		1DF221838C832BA679A5CA2A /* FindCatGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8917A17367DB1B34F65C177 /* FindCatGameView.swift */; };
@@ -31,6 +32,7 @@
 		C5A65D847E5499DC9BEF6D8D /* FreeKickGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4127D48FD6D6EF6BFE670EE5 /* FreeKickGameView.swift */; };
 		DC6AF7E0066A28E046E3ADE0 /* FishingGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F99BB7D40AE91E7B7BCC3EA /* FishingGameView.swift */; };
 		E1426741E8B22FAC3CA9CDA2 /* ArcherGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917D2E518C215E212CF73759 /* ArcherGameView.swift */; };
+		E37DF1C2E3ADBF075F8226BE /* PixelSprites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0616F56CCF51A26D8F995096 /* PixelSprites.swift */; };
 		E9484BBAF970C930FB41333E /* LaserGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428E0F4C67888E5023F7B302 /* LaserGameView.swift */; };
 		ECBD95631D55EF31B4E8C8A3 /* OFL-PressStart2P.txt in Resources */ = {isa = PBXBuildFile; fileRef = BCF9DF7417BE4379C6218BD3 /* OFL-PressStart2P.txt */; };
 		F2803ADCE055AE80F93D4BC7 /* SoapboxGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E16A19687C06DFE430F89A /* SoapboxGameView.swift */; };
@@ -38,6 +40,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0616F56CCF51A26D8F995096 /* PixelSprites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PixelSprites.swift; sourceTree = "<group>"; };
 		0AE236750AFE160844552A27 /* TitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleView.swift; sourceTree = "<group>"; };
 		14FB38F41DEC58FF80A1D04D /* SkateGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkateGameView.swift; sourceTree = "<group>"; };
 		1981F4DA9C120FBEF1ACC8D6 /* GameKitCommon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameKitCommon.swift; sourceTree = "<group>"; };
@@ -62,6 +65,7 @@
 		BADF48F80C4F19D3850B8365 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		BCADDB945A45474980376C22 /* CondoMapScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CondoMapScene.swift; sourceTree = "<group>"; };
 		BCF9DF7417BE4379C6218BD3 /* OFL-PressStart2P.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "OFL-PressStart2P.txt"; sourceTree = "<group>"; };
+		C04DB20A06F24181D26AD9F0 /* Chip8Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chip8Audio.swift; sourceTree = "<group>"; };
 		CEF0F1BD19E19E9A2E369EE2 /* RetiroQuestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetiroQuestApp.swift; sourceTree = "<group>"; };
 		DEB7BC84C57738DBC1336C9D /* KiteGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KiteGameView.swift; sourceTree = "<group>"; };
 		E69AF8C562BC6F941713B8A3 /* MemoryGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryGameView.swift; sourceTree = "<group>"; };
@@ -95,6 +99,7 @@
 				E8C0D4F5286F2BA35694A6DB /* AvatarView.swift */,
 				EE63D2133A417F438B1B929B /* BasketballGameView.swift */,
 				82DF4AA87654775377ACAF9F /* BMXGameView.swift */,
+				C04DB20A06F24181D26AD9F0 /* Chip8Audio.swift */,
 				BCADDB945A45474980376C22 /* CondoMapScene.swift */,
 				455DCD173A3CCF422922ADCD /* DodgeballGameView.swift */,
 				A8917A17367DB1B34F65C177 /* FindCatGameView.swift */,
@@ -108,6 +113,7 @@
 				E69AF8C562BC6F941713B8A3 /* MemoryGameView.swift */,
 				2B703DB53445A1061116AD4B /* Models.swift */,
 				BCF9DF7417BE4379C6218BD3 /* OFL-PressStart2P.txt */,
+				0616F56CCF51A26D8F995096 /* PixelSprites.swift */,
 				365578DAEA67BD9F3CF562F7 /* PressStart2P-Regular.ttf */,
 				A64401DF432D3EC933C600A7 /* ResultsView.swift */,
 				CEF0F1BD19E19E9A2E369EE2 /* RetiroQuestApp.swift */,
@@ -193,6 +199,7 @@
 				6CB93C81BEBB404777597C6E /* AvatarView.swift in Sources */,
 				5C58B8EF75B1E461342E585C /* BMXGameView.swift in Sources */,
 				64ECE21D5FB1D463D2413769 /* BasketballGameView.swift in Sources */,
+				046A721B8B5EDD7E03102D48 /* Chip8Audio.swift in Sources */,
 				8FFDE322C98A065467BC9ACE /* CondoMapScene.swift in Sources */,
 				83DF5558322726C3F4172A85 /* DodgeballGameView.swift in Sources */,
 				1DF221838C832BA679A5CA2A /* FindCatGameView.swift in Sources */,
@@ -205,6 +212,7 @@
 				5B92D1E6178ACF5B337E02FD /* MapView.swift in Sources */,
 				7B74D176EF175A1F1211398E /* MemoryGameView.swift in Sources */,
 				F58125636EE417CEEAB32325 /* Models.swift in Sources */,
+				E37DF1C2E3ADBF075F8226BE /* PixelSprites.swift in Sources */,
 				20A8A820CC691D772F2DB90D /* ResultsView.swift in Sources */,
 				0B671F290F9BAA3A7CD5D72A /* RetiroQuestApp.swift in Sources */,
 				3554D4C0515C15954641409E /* SkateGameView.swift in Sources */,

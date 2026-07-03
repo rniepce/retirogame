@@ -149,10 +149,9 @@ enum FreeKickPainter {
     static func draw(_ e: FreeKickEngine, _ ctx: inout GraphicsContext, _ size: CGSize) {
         let w = size.width, h = size.height
 
-        // gramado em perspectiva com faixas
-        ctx.fill(Path(CGRect(origin: .zero, size: size)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0x5E874A), Color(hex: 0x7FA85E)]),
-                                       startPoint: .zero, endPoint: CGPoint(x: 0, y: h)))
+        // gramado em faixas chapadas
+        GamePaint.bands(&ctx, rect: CGRect(origin: .zero, size: size),
+                        colors: [Color(hex: 0x5E874A), Color(hex: 0x6F9854), Color(hex: 0x7FA85E)])
         for i in 0..<6 {
             let y0 = h * (0.1 + 0.15 * Double(i))
             ctx.fill(Path(CGRect(x: 0, y: y0, width: w, height: h * 0.075)),
@@ -207,11 +206,11 @@ enum FreeKickPainter {
 
         // bola
         if let (pos, scale) = e.ballPosition(size: size) {
-            GamePaint.emoji(&ctx, "⚽", at: pos, size: 46 * scale)
+            Px.draw(&ctx, Px.soccer, at: pos, pixel: 5.75 * scale)
         } else {
             ctx.fill(Path(ellipseIn: CGRect(x: e.ballStart.x - 20, y: e.ballStart.y + 16, width: 40, height: 10)),
                      with: .color(.black.opacity(0.2)))
-            GamePaint.emoji(&ctx, "⚽", at: e.ballStart, size: 46)
+            Px.draw(&ctx, Px.soccer, at: e.ballStart, pixel: 5.75)
         }
     }
 

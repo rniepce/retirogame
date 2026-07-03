@@ -91,10 +91,9 @@ enum FishingPainter {
     static func draw(_ e: FishingEngine, _ ctx: inout GraphicsContext, _ size: CGSize) {
         let w = size.width, h = size.height
 
-        // amanhecer na serra
-        ctx.fill(Path(CGRect(origin: .zero, size: size)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0xFAD9A0), Color(hex: 0xD7EBDF)]),
-                                       startPoint: .zero, endPoint: CGPoint(x: 0, y: h * 0.4)))
+        // amanhecer na serra (faixas chapadas)
+        GamePaint.bands(&ctx, rect: CGRect(x: 0, y: 0, width: w, height: h * 0.4),
+                        colors: [Color(hex: 0xFAD9A0), Color(hex: 0xE9E2C0), Color(hex: 0xD7EBDF)])
         var serra = Path()
         serra.move(to: CGPoint(x: 0, y: h * 0.38))
         serra.addQuadCurve(to: CGPoint(x: w * 0.5, y: h * 0.34), control: CGPoint(x: w * 0.25, y: h * 0.24))
@@ -103,10 +102,10 @@ enum FishingPainter {
         serra.closeSubpath()
         ctx.fill(serra, with: .color(Color(hex: 0x2C5A3C)))
 
-        // lago
-        ctx.fill(Path(CGRect(x: 0, y: h * 0.4, width: w, height: h * 0.6)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0x4FA7C9), Color(hex: 0x2F7FA3)]),
-                                       startPoint: CGPoint(x: 0, y: h * 0.4), endPoint: CGPoint(x: 0, y: h)))
+        // lago em faixas
+        GamePaint.bands(&ctx, rect: CGRect(x: 0, y: h * 0.4, width: w, height: h * 0.6),
+                        colors: [Color(hex: 0x4FA7C9), Color(hex: 0x4497BA),
+                                 Color(hex: 0x3A8BAC), Color(hex: 0x2F7FA3)])
         for i in 0..<5 {
             let y = h * (0.48 + 0.1 * Double(i))
             let drift = sin(e.elapsed * 0.8 + Double(i)) * 14
@@ -154,15 +153,21 @@ enum FishingPainter {
                 p.closeSubpath()
             }, with: .color(Theme.terra))
         } else {
-            ctx.draw(Text("toque para lançar 🎯")
-                .font(.system(size: 15, weight: .bold, design: .rounded))
+            ctx.draw(Text("TOQUE PARA LANÇAR")
+                .font(Theme.px(9))
                 .foregroundColor(.white.opacity(0.85)),
                      at: CGPoint(x: e.bobber.x, y: e.bobber.y), anchor: .center)
         }
 
-        // peixe fisgado subindo
+        // peixe fisgado subindo (sprite recolorido por raridade)
         if let (emoji, _) = e.caught {
-            GamePaint.emoji(&ctx, emoji, at: CGPoint(x: b.x, y: b.y - 50), size: 46)
+            let tint: [Character: Color]
+            switch emoji {
+            case "🐡": tint = Px.tinted(["B": Theme.ouro])
+            case "🐠": tint = Px.tinted(["B": Color(hex: 0xF08A24)])
+            default: tint = Px.palette
+            }
+            Px.draw(&ctx, Px.fish, at: CGPoint(x: b.x, y: b.y - 50), pixel: 5.5, colors: tint)
         }
     }
 }

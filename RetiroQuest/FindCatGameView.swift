@@ -197,7 +197,8 @@ enum FindCatPainter {
                  with: .color(.white))
         ctx.fill(Path(ellipseIn: CGRect(x: c.x + 3, y: c.y - 6, width: 5, height: 6)),
                  with: .color(.white))
-        GamePaint.emoji(&ctx, "✨", at: CGPoint(x: c.x + 18, y: c.y - 22), size: 16)
+        Px.draw(&ctx, Px.sparkle, at: CGPoint(x: c.x + 18, y: c.y - 22), pixel: 3,
+                colors: Px.tinted(["W": Theme.ouro]))
     }
 }
 

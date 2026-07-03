@@ -103,14 +103,15 @@ enum KitePainter {
     static func draw(_ e: KiteEngine, _ ctx: inout GraphicsContext, _ size: CGSize) {
         let w = size.width, h = size.height
 
-        // céu
-        ctx.fill(Path(CGRect(origin: .zero, size: size)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0x6FB6D8), Color(hex: 0xC9E6EC)]),
-                                       startPoint: .zero, endPoint: CGPoint(x: 0, y: h * 0.75)))
-        GamePaint.emoji(&ctx, "☀️", at: CGPoint(x: w * 0.85, y: h * 0.1), size: 46)
+        // céu em faixas
+        GamePaint.bands(&ctx, rect: CGRect(origin: .zero, size: size),
+                        colors: [Color(hex: 0x6FB6D8), Color(hex: 0x8FC6DE),
+                                 Color(hex: 0xAFD6E5), Color(hex: 0xC9E6EC)])
+        Px.draw(&ctx, Px.sun, at: CGPoint(x: w * 0.85, y: h * 0.1), pixel: 5.5)
         for (i, cy) in [0.16, 0.3, 0.44].enumerated() {
             let drift = (e.elapsed * (10 + Double(i) * 6)).truncatingRemainder(dividingBy: w + 160) - 80
-            GamePaint.emoji(&ctx, "☁️", at: CGPoint(x: drift, y: h * cy), size: 40 + Double(i) * 10)
+            Px.draw(&ctx, Px.cloud, at: CGPoint(x: drift, y: h * cy),
+                    pixel: (40 + Double(i) * 10) / 12)
         }
 
         // serra e mirante
@@ -125,21 +126,22 @@ enum KitePainter {
                       cornerRadius: 4),
                  with: .color(Color(hex: 0x8A6238)))
 
-        // aviso de rajada
+        // aviso de rajada (setas pixel na direção do vento)
         if e.gustWarning || e.gustActive {
             let dir = e.gustDirection
             let baseX = dir > 0 ? w * 0.12 : w * 0.88
             for i in 0..<3 {
                 let off = Double(i) * 26 * dir + sin(e.elapsed * 10) * 5
-                ctx.draw(Text("〰️").font(.system(size: 26)),
-                         at: CGPoint(x: baseX + off, y: h * 0.22 + Double(i) * 20), anchor: .center)
+                Px.draw(&ctx, Px.windChevrons,
+                        at: CGPoint(x: baseX + off, y: h * 0.22 + Double(i) * 20),
+                        pixel: 4, flipX: dir < 0)
             }
         }
 
         // estrela
         if let s = e.starPos {
             let pulse = 1 + sin(e.elapsed * 5) * 0.15
-            GamePaint.emoji(&ctx, "⭐", at: s, size: 36 * pulse)
+            Px.draw(&ctx, Px.star, at: s, pixel: 4.5 * pulse)
         }
 
         // linha do mirante até a pipa (com barriga)
@@ -164,7 +166,7 @@ enum KitePainter {
         }
         c.stroke(tail, with: .color(.white.opacity(0.8)), lineWidth: 2)
         for (i, ty) in [40.0, 66.0].enumerated() {
-            GamePaint.emoji(&c, "🎀", at: CGPoint(x: sin(e.elapsed * 6 + Double(i + 1)) * 10, y: ty), size: 12)
+            Px.draw(&c, Px.bow, at: CGPoint(x: sin(e.elapsed * 6 + Double(i + 1)) * 10, y: ty), pixel: 3)
         }
         c.fill(Path { p in
             p.move(to: CGPoint(x: 0, y: -30)); p.addLine(to: CGPoint(x: 22, y: 0))

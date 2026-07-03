@@ -3,17 +3,16 @@ import SwiftUI
 struct TitleView: View {
     @EnvironmentObject private var app: AppState
     @EnvironmentObject private var progress: GameProgress
+    @State private var muted = Chip8Audio.shared.muted
 
     var body: some View {
         ZStack {
-            LinearGradient(
-                stops: [
-                    .init(color: Color(hex: 0x2C5A3C), location: 0),
-                    .init(color: Theme.serra, location: 0.55),
-                    .init(color: Theme.serraDark, location: 1),
-                ],
-                startPoint: .top, endPoint: .bottom
-            )
+            VStack(spacing: 0) {
+                Color(hex: 0x2C5A3C)
+                Color(hex: 0x254A32)
+                Theme.serra
+                Theme.serraDark
+            }
             .ignoresSafeArea()
 
             VStack(spacing: 12) {
@@ -49,10 +48,19 @@ struct TitleView: View {
                         .buttonStyle(GhostButtonStyle())
                 }
 
+                Button(muted ? "🔇 SOM: OFF" : "🔊 SOM: ON") {
+                    muted.toggle()
+                    Chip8Audio.shared.muted = muted
+                    if !muted { Haptics.ui() }
+                }
+                .font(Theme.px(8))
+                .foregroundStyle(Theme.creme.opacity(0.65))
+                .padding(.top, 14)
+
                 Text("© 2026 RETIRO GAMES")
                     .font(Theme.px(7))
                     .foregroundStyle(Theme.creme.opacity(0.4))
-                    .padding(.top, 18)
+                    .padding(.top, 8)
             }
             .padding(.horizontal, 30)
         }
@@ -66,11 +74,10 @@ private struct TitleArt: View {
             let s = size.width / 320
             ctx.scaleBy(x: s, y: s)
 
-            let frame = Path(roundedRect: CGRect(x: 10, y: 10, width: 300, height: 170), cornerRadius: 18)
-            ctx.fill(frame, with: .linearGradient(
-                Gradient(colors: [Color(hex: 0x9AD0E8), Color(hex: 0xD8ECDC)]),
-                startPoint: CGPoint(x: 0, y: 10), endPoint: CGPoint(x: 0, y: 180)))
+            let frame = Path(roundedRect: CGRect(x: 10, y: 10, width: 300, height: 170), cornerRadius: 6)
             ctx.clip(to: frame)
+            GamePaint.bands(&ctx, rect: CGRect(x: 10, y: 10, width: 300, height: 170),
+                            colors: [Color(hex: 0x9AD0E8), Color(hex: 0xB9DEE2), Color(hex: 0xD8ECDC)])
 
             // morros
             ctx.fill(Path { p in

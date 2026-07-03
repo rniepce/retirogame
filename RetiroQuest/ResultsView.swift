@@ -16,10 +16,13 @@ struct ResultsView: View {
 
     var body: some View {
         ZStack {
-            RadialGradient(colors: [Color(hex: 0x2C5A3C), Theme.serraDark],
-                           center: .init(x: 0.5, y: 0.3),
-                           startRadius: 40, endRadius: 500)
-                .ignoresSafeArea()
+            VStack(spacing: 0) {
+                Color(hex: 0x2C5A3C)
+                Color(hex: 0x254A32)
+                Theme.serra
+                Theme.serraDark
+            }
+            .ignoresSafeArea()
 
             VStack(spacing: 12) {
                 if let id = poi.minigame {

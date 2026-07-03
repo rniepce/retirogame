@@ -27,13 +27,29 @@ final class GameLoop: NSObject {
     }
 }
 
-// MARK: - Háptica
+// MARK: - Háptica + som 8-bit (os jogos chamam um ponto só)
 
 enum Haptics {
-    static func tap() { UIImpactFeedbackGenerator(style: .medium).impactOccurred() }
-    static func light() { UIImpactFeedbackGenerator(style: .light).impactOccurred() }
-    static func success() { UINotificationFeedbackGenerator().notificationOccurred(.success) }
-    static func error() { UINotificationFeedbackGenerator().notificationOccurred(.error) }
+    static func tap() {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+        Chip8Audio.shared.play(.thud)
+    }
+    static func light() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        Chip8Audio.shared.play(.blip)
+    }
+    static func success() {
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
+        Chip8Audio.shared.play(.success)
+    }
+    static func error() {
+        UINotificationFeedbackGenerator().notificationOccurred(.error)
+        Chip8Audio.shared.play(.error)
+    }
+    static func ui() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        Chip8Audio.shared.play(.tick)
+    }
 }
 
 func starsFor(score: Int, max maxScore: Int) -> Int {

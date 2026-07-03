@@ -103,13 +103,12 @@ enum SkatePainter {
         let w = size.width, h = size.height
         let (center, radius) = e.pipeGeometry(size: size)
 
-        // fundo: tarde no clube
-        ctx.fill(Path(CGRect(origin: .zero, size: size)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0xF3C583), Color(hex: 0xE8A06A)]),
-                                       startPoint: .zero, endPoint: CGPoint(x: 0, y: h * 0.6)))
+        // fundo: tarde no clube (faixas chapadas)
+        GamePaint.bands(&ctx, rect: CGRect(x: 0, y: 0, width: w, height: h * 0.58),
+                        colors: [Color(hex: 0xF3C583), Color(hex: 0xEDB277), Color(hex: 0xE8A06A)])
         ctx.fill(Path(CGRect(x: 0, y: h * 0.58, width: w, height: h * 0.42)),
                  with: .color(Color(hex: 0x7FA85E)))
-        GamePaint.emoji(&ctx, "🌇", at: CGPoint(x: w * 0.5, y: h * 0.14), size: 44)
+        Px.draw(&ctx, Px.sun, at: CGPoint(x: w * 0.5, y: h * 0.13), pixel: 5)
 
         // half-pipe: semicírculo interno
         var pipe = Path()
@@ -159,10 +158,10 @@ enum SkatePainter {
                with: .color(Color(hex: 0x2E4057)))              // capacete
 
         if e.airborne {
-            ctx.draw(Text("TOQUE para manobrar!")
-                .font(.system(size: 15, weight: .heavy, design: .rounded))
-                .foregroundColor(Theme.creme),
-                     at: CGPoint(x: w / 2, y: h * 0.14), anchor: .center)
+            ctx.draw(Text("TOQUE P/ MANOBRAR!")
+                .font(Theme.px(10))
+                .foregroundColor(Theme.tinta),
+                     at: CGPoint(x: w / 2, y: h * 0.22), anchor: .center)
         }
     }
 }

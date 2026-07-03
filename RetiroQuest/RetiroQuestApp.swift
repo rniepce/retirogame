@@ -37,6 +37,22 @@ struct RootView: View {
                 ResultsView(poi: poi, result: result)
             }
         }
+        .onAppear {
+            Chip8Audio.shared.startIfNeeded()
+            syncMusic(for: app.route)
+        }
+        .onChange(of: app.route) { _, new in
+            syncMusic(for: new)
+        }
+    }
+
+    /// Música chiptune fora dos minigames; silêncio durante as partidas.
+    private func syncMusic(for route: Route) {
+        if case .minigame = route {
+            Chip8Audio.shared.stopMusic()
+        } else {
+            Chip8Audio.shared.startMusic()
+        }
     }
 
     /// Despacho do registro de minigames — para adicionar um novo,

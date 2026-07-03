@@ -76,9 +76,8 @@ enum LaserPainter {
         let w = size.width, h = size.height
 
         // parede da arena com grade neon
-        ctx.fill(Path(CGRect(origin: .zero, size: size)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0x232A47), Color(hex: 0x14182B)]),
-                                       startPoint: .zero, endPoint: CGPoint(x: 0, y: h)))
+        GamePaint.bands(&ctx, rect: CGRect(origin: .zero, size: size),
+                        colors: [Color(hex: 0x232A47), Color(hex: 0x1C2139), Color(hex: 0x14182B)])
         var grid = Path()
         for i in 1..<8 {
             let x = w * Double(i) / 8
@@ -116,7 +115,8 @@ enum LaserPainter {
             ctx.fill(Path(ellipseIn: CGRect(x: c.x - radius * 0.62, y: c.y - radius * 0.62,
                                             width: radius * 1.24, height: radius * 1.24)),
                      with: .color(color))
-            GamePaint.emoji(&ctx, t.isRed ? "✖️" : "🎯", at: c, size: radius * 0.7)
+            Px.draw(&ctx, t.isRed ? Px.cross : Px.plus, at: c, pixel: radius * 0.1,
+                    colors: Px.tinted(["W": Theme.tinta]))
             // anel do tempo restante
             var ring = Path()
             ring.addArc(center: c, radius: radius * 0.95,

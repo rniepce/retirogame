@@ -90,13 +90,11 @@ enum BasketballPainter {
     static func draw(_ e: BasketballEngine, _ ctx: inout GraphicsContext, _ size: CGSize) {
         let w = size.width, h = size.height
 
-        // quadra ao entardecer
-        ctx.fill(Path(CGRect(origin: .zero, size: size)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0xA8D4E4), Color(hex: 0xD7EBDF)]),
-                                       startPoint: .zero, endPoint: CGPoint(x: 0, y: h * 0.5)))
-        ctx.fill(Path(CGRect(x: 0, y: h * 0.5, width: w, height: h * 0.5)),
-                 with: .linearGradient(Gradient(colors: [Color(hex: 0xC28352), Color(hex: 0xB8794A)]),
-                                       startPoint: CGPoint(x: 0, y: h * 0.5), endPoint: CGPoint(x: 0, y: h)))
+        // quadra ao entardecer (faixas chapadas)
+        GamePaint.bands(&ctx, rect: CGRect(x: 0, y: 0, width: w, height: h * 0.5),
+                        colors: [Color(hex: 0xA8D4E4), Color(hex: 0xC0E0E2), Color(hex: 0xD7EBDF)])
+        GamePaint.bands(&ctx, rect: CGRect(x: 0, y: h * 0.5, width: w, height: h * 0.5),
+                        colors: [Color(hex: 0xC28352), Color(hex: 0xBD7E4E), Color(hex: 0xB8794A)])
         // linhas da quadra
         var lines = Path()
         lines.move(to: CGPoint(x: w * 0.1, y: h)); lines.addLine(to: CGPoint(x: w * 0.35, y: h * 0.52))
@@ -128,12 +126,12 @@ enum BasketballPainter {
 
         // bola
         if let (pos, scale) = e.ballPose(size: size) {
-            GamePaint.emoji(&ctx, "🏀", at: pos, size: 52 * scale)
+            Px.draw(&ctx, Px.basketball, at: pos, pixel: 6.5 * scale)
         } else {
             ctx.fill(Path(ellipseIn: CGRect(x: e.ballStart.x - 22, y: e.ballStart.y + 20,
                                             width: 44, height: 10)),
                      with: .color(.black.opacity(0.2)))
-            GamePaint.emoji(&ctx, "🏀", at: e.ballStart, size: 52)
+            Px.draw(&ctx, Px.basketball, at: e.ballStart, pixel: 6.5)
             // guia de força
             ctx.stroke(Path { p in
                 p.move(to: CGPoint(x: e.ballStart.x, y: e.ballStart.y - 34))

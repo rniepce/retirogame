@@ -132,11 +132,12 @@ enum TreasurePainter {
                  with: .color(Color(hex: 0xBBD3AC)))
         ctx.fill(Path(roundedRect: CGRect(origin: mp(165, 565), size: CGSize(width: rect.width * 0.12, height: rect.height * 0.05)), cornerRadius: 4),
                  with: .color(Color(hex: 0x9CC4D4)))
-        GamePaint.emoji(&ctx, "⛪", at: mp(331, 985), size: rect.width * 0.06)
-        GamePaint.emoji(&ctx, "🌲", at: mp(140, 260), size: rect.width * 0.06)
-        GamePaint.emoji(&ctx, "🌲", at: mp(700, 750), size: rect.width * 0.06)
+        let mark = max(2, rect.width * 0.007)
+        Px.draw(&ctx, Px.church, at: mp(331, 985), pixel: mark)
+        Px.draw(&ctx, Px.tree, at: mp(140, 260), pixel: mark)
+        Px.draw(&ctx, Px.tree, at: mp(700, 750), pixel: mark)
         // rosa dos ventos
-        GamePaint.emoji(&ctx, "🧭", at: CGPoint(x: rect.maxX - 26, y: rect.minY + 26), size: 30)
+        Px.draw(&ctx, Px.compass, at: CGPoint(x: rect.maxX - 26, y: rect.minY + 26), pixel: 4)
 
         // escavações
         for dig in e.digs {
@@ -150,7 +151,7 @@ enum TreasurePainter {
             case .found: color = Theme.ouro
             }
             if dig.heat == .found {
-                GamePaint.emoji(&ctx, "💰", at: p, size: 40)
+                Px.draw(&ctx, Px.chest, at: p, pixel: 5)
             } else {
                 ctx.fill(Path(ellipseIn: CGRect(x: p.x - 9, y: p.y - 9, width: 18, height: 18)),
                          with: .color(color.opacity(0.35)))
@@ -161,11 +162,18 @@ enum TreasurePainter {
             }
         }
 
-        // legenda
-        ctx.draw(Text("🔥 perto  ·  🌤️ morno  ·  🧊 longe")
-            .font(.system(size: 14, weight: .semibold, design: .rounded))
-            .foregroundColor(Color(hex: 0xE8D9B5)),
-                 at: CGPoint(x: size.width / 2, y: rect.maxY + 32), anchor: .center)
+        // legenda com quadradinhos de cor
+        let legend: [(Color, String)] = [(Color(hex: 0xE8503A), "PERTO"),
+                                         (Theme.ouro, "MORNO"),
+                                         (Color(hex: 0x6FB6D8), "LONGE")]
+        let legendY = rect.maxY + 32
+        var lx = size.width / 2 - 128
+        for (color, label) in legend {
+            ctx.fill(Path(CGRect(x: lx, y: legendY - 5, width: 10, height: 10)), with: .color(color))
+            ctx.draw(Text(label).font(Theme.px(8)).foregroundColor(Color(hex: 0xE8D9B5)),
+                     at: CGPoint(x: lx + 16, y: legendY), anchor: .leading)
+            lx += 92
+        }
     }
 }
 

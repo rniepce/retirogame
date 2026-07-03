@@ -26,10 +26,13 @@ struct MemoryGameView: View {
 
     var body: some View {
         ZStack {
-            // interior da capela
-            LinearGradient(colors: [Color(hex: 0x3A2E4F), Color(hex: 0x241F30)],
-                           startPoint: .top, endPoint: .bottom)
-                .ignoresSafeArea()
+            // interior da capela (faixas chapadas)
+            VStack(spacing: 0) {
+                Color(hex: 0x3A2E4F)
+                Color(hex: 0x2F2740)
+                Color(hex: 0x241F30)
+            }
+            .ignoresSafeArea()
             Circle()
                 .fill(RadialGradient(colors: [Color(hex: 0xF2B23E).opacity(0.25), .clear],
                                      center: .center, startRadius: 10, endRadius: 170))
@@ -106,9 +109,8 @@ struct MemoryGameView: View {
         var body: some View {
             ZStack {
                 // verso: rosácea de vitral
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(LinearGradient(colors: [Color(hex: 0x5B4A8A), Color(hex: 0x3A2E4F)],
-                                         startPoint: .topLeading, endPoint: .bottomTrailing))
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Color(hex: 0x5B4A8A))
                     .overlay(
                         Circle().stroke(Theme.ouro.opacity(0.7), lineWidth: 2)
                             .padding(10)
@@ -117,12 +119,11 @@ struct MemoryGameView: View {
                     .opacity(card.up || card.matched ? 0 : 1)
 
                 // frente: vitral colorido com o símbolo
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(LinearGradient(colors: [Theme.creme, Color(hex: 0xF3E6C6)],
-                                         startPoint: .top, endPoint: .bottom))
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(Theme.creme)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(card.matched ? Theme.ouro : Color(hex: 0xB59A66), lineWidth: 2.5)
+                        RoundedRectangle(cornerRadius: 4)
+                            .stroke(card.matched ? Theme.ouro : Color(hex: 0xB59A66), lineWidth: 3)
                     )
                     .overlay(Text(card.symbol).font(.system(size: 34)))
                     .opacity(card.up || card.matched ? 1 : 0)

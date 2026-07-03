@@ -252,11 +252,9 @@ enum ArcherPainter {
     }
 
     private static func drawBackground(_ ctx: inout GraphicsContext, w: CGFloat, h: CGFloat) {
-        // céu
-        ctx.fill(Path(CGRect(x: 0, y: 0, width: w, height: h * 0.62)),
-                 with: .linearGradient(
-                    Gradient(colors: [Color(hex: 0x8FC4DB), Color(hex: 0xD7EBDF)]),
-                    startPoint: .zero, endPoint: CGPoint(x: 0, y: h * 0.62)))
+        // céu em faixas chapadas
+        GamePaint.bands(&ctx, rect: CGRect(x: 0, y: 0, width: w, height: h * 0.62),
+                        colors: [Color(hex: 0x8FC4DB), Color(hex: 0xB0D8DC), Color(hex: 0xD7EBDF)])
         // serra ao fundo
         ctx.fill(Path { p in
             p.move(to: CGPoint(x: 0, y: h * 0.52))
@@ -268,11 +266,9 @@ enum ArcherPainter {
             p.addLine(to: CGPoint(x: 0, y: h * 0.62))
             p.closeSubpath()
         }, with: .color(Color(hex: 0x2C5A3C)))
-        // gramado em perspectiva
-        ctx.fill(Path(CGRect(x: 0, y: h * 0.58, width: w, height: h * 0.42)),
-                 with: .linearGradient(
-                    Gradient(colors: [Color(hex: 0x7FA85E), Color(hex: 0x5E874A)]),
-                    startPoint: CGPoint(x: 0, y: h * 0.58), endPoint: CGPoint(x: 0, y: h)))
+        // gramado em faixas chapadas
+        GamePaint.bands(&ctx, rect: CGRect(x: 0, y: h * 0.58, width: w, height: h * 0.42),
+                        colors: [Color(hex: 0x7FA85E), Color(hex: 0x6F9854), Color(hex: 0x5E874A)])
         for i in 1..<5 {
             let yy = h * 0.58 + h * 0.42 * pow(CGFloat(i) / 5, 1.6)
             ctx.stroke(Path { p in
