@@ -16,30 +16,30 @@ struct TitleView: View {
             )
             .ignoresSafeArea()
 
-            VStack(spacing: 10) {
+            VStack(spacing: 12) {
                 TitleArt()
                     .frame(maxWidth: 320)
-                    .padding(.bottom, 6)
+                    .padding(.bottom, 10)
 
                 Text("AVENTURA NO CONDOMÍNIO")
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
-                    .kerning(2.2)
+                    .font(Theme.px(8))
                     .foregroundStyle(Theme.grama)
 
-                (Text("Retiro\n") + Text("Quest").foregroundColor(Theme.ouro))
-                    .font(.system(size: 54, weight: .heavy, design: .rounded))
+                (Text("RETIRO\n") + Text("QUEST").foregroundColor(Theme.ouro))
+                    .font(Theme.px(30))
                     .foregroundStyle(Theme.creme)
                     .multilineTextAlignment(.center)
-                    .lineSpacing(-8)
+                    .lineSpacing(10)
+                    .shadow(color: Theme.tinta, radius: 0, x: 3, y: 3)
 
-                Text("Explore as ruas da serra, visite as casas e o clube — e vença os desafios de cada canto.")
-                    .font(.system(size: 16, design: .rounded))
+                Text("EXPLORE A SERRA E VENÇA\nOS 15 DESAFIOS DO CONDOMÍNIO")
+                    .font(Theme.px(8))
                     .foregroundStyle(Theme.creme.opacity(0.75))
                     .multilineTextAlignment(.center)
-                    .frame(maxWidth: 300)
+                    .lineSpacing(6)
                     .padding(.bottom, 22)
 
-                Button(progress.avatarReady ? "Continuar" : "Jogar") {
+                Button(progress.avatarReady ? "Continuar" : "▶ Jogar") {
                     app.route = progress.avatarReady ? .map : .avatarCreator
                 }
                 .buttonStyle(GameButtonStyle())
@@ -48,6 +48,11 @@ struct TitleView: View {
                     Button("Editar avatar") { app.route = .avatarCreator }
                         .buttonStyle(GhostButtonStyle())
                 }
+
+                Text("© 2026 RETIRO GAMES")
+                    .font(Theme.px(7))
+                    .foregroundStyle(Theme.creme.opacity(0.4))
+                    .padding(.top, 18)
             }
             .padding(.horizontal, 30)
         }

@@ -151,16 +151,9 @@ struct MiniGameHost<E: MiniEngine>: View {
         .background(background)
         .overlay(alignment: .top) {
             HStack {
-                Button {
+                ExitButton {
                     engine.stop()
                     onExit()
-                } label: {
-                    Text("✕ Sair")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
-                        .foregroundStyle(Theme.creme)
-                        .padding(.vertical, 9)
-                        .padding(.horizontal, 16)
-                        .background(Capsule().fill(Theme.serraDark.opacity(0.78)))
                 }
                 Spacer()
                 HUDChip(text: engine.hud)
@@ -177,19 +170,41 @@ struct MiniGameHost<E: MiniEngine>: View {
 
 // MARK: - Pinturas compartilhadas
 
+/// Botão de sair padrão dos minigames (estilo pixel).
+struct ExitButton: View {
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            Text("✕ SAIR")
+                .font(Theme.px(10))
+                .foregroundStyle(Theme.creme)
+                .padding(.vertical, 9)
+                .padding(.horizontal, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 3)
+                        .fill(Theme.serraDark.opacity(0.88))
+                        .overlay(RoundedRectangle(cornerRadius: 3)
+                            .strokeBorder(Theme.creme.opacity(0.7), lineWidth: 2))
+                )
+        }
+    }
+}
+
 enum GamePaint {
+    /// Painel de aviso estilo caixa de diálogo de fliperama.
     static func notice(_ ctx: inout GraphicsContext, engine: MiniEngine, size: CGSize) {
         guard let n = engine.notice, CACurrentMediaTime() < n.until else { return }
         let resolved = ctx.resolve(
             Text(n.text)
-                .font(.system(size: 24, weight: .heavy, design: .rounded))
+                .font(Theme.px(12))
                 .foregroundColor(Theme.creme))
-        let t = resolved.measure(in: CGSize(width: 600, height: 100))
+        let t = resolved.measure(in: CGSize(width: size.width - 60, height: 200))
         let y = size.height * 0.45
-        ctx.fill(Path(roundedRect: CGRect(x: size.width / 2 - t.width / 2 - 18, y: y - 22,
-                                          width: t.width + 36, height: 44),
-                      cornerRadius: 22),
-                 with: .color(Theme.serraDark.opacity(0.85)))
+        let box = CGRect(x: size.width / 2 - t.width / 2 - 16, y: y - t.height / 2 - 12,
+                         width: t.width + 32, height: t.height + 24)
+        ctx.fill(Path(box), with: .color(Theme.serraDark.opacity(0.92)))
+        ctx.stroke(Path(box.insetBy(dx: 2, dy: 2)), with: .color(Theme.creme), lineWidth: 2)
+        ctx.stroke(Path(box.insetBy(dx: 6, dy: 6)), with: .color(Theme.creme.opacity(0.35)), lineWidth: 1.5)
         ctx.draw(resolved, at: CGPoint(x: size.width / 2, y: y), anchor: .center)
     }
 

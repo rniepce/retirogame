@@ -10,14 +10,16 @@ struct AvatarCreatorView: View {
         ZStack {
             Theme.areia.ignoresSafeArea()
             VStack(spacing: 0) {
-                VStack(spacing: 4) {
+                VStack(spacing: 8) {
                     Text("SEU PERSONAGEM")
-                        .font(.system(size: 12, weight: .bold, design: .rounded))
-                        .kerning(2.2)
+                        .font(Theme.px(8))
                         .foregroundStyle(Theme.terra)
-                    Text("Monte seu explorador")
-                        .font(.system(size: 28, weight: .heavy, design: .rounded))
+                    Text("MONTE SEU\nEXPLORADOR")
+                        .font(Theme.px(16))
                         .foregroundStyle(Theme.tinta)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(6)
+                        .shadow(color: Theme.areiaDark, radius: 0, x: 2, y: 2)
                 }
                 .padding(.top, 18)
                 .padding(.bottom, 8)
@@ -91,8 +93,7 @@ struct AvatarCreatorView: View {
     private func optionGroup<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title.uppercased())
-                .font(.system(size: 13, weight: .heavy, design: .rounded))
-                .kerning(1.5)
+                .font(Theme.px(8))
                 .foregroundStyle(Color(hex: 0x6B5B44))
             content()
         }
@@ -102,18 +103,18 @@ struct AvatarCreatorView: View {
         HStack(spacing: 10) {
             ForEach(items.indices, id: \.self) { i in
                 Button { action(i) } label: {
-                    Text(items[i].label)
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                    Text(items[i].label.uppercased())
+                        .font(Theme.px(9))
                         .foregroundStyle(items[i].selected ? Theme.terraDark : Theme.tinta)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 11)
+                        .padding(.vertical, 12)
                         .background(
-                            RoundedRectangle(cornerRadius: 14)
+                            RoundedRectangle(cornerRadius: 3)
                                 .fill(items[i].selected ? Color(hex: 0xFBE3D3) : Theme.creme)
                         )
                         .overlay(
-                            RoundedRectangle(cornerRadius: 14)
-                                .strokeBorder(items[i].selected ? Theme.terra : Color(hex: 0xD8C79E), lineWidth: 2.5)
+                            RoundedRectangle(cornerRadius: 3)
+                                .strokeBorder(items[i].selected ? Theme.terra : Color(hex: 0xD8C79E), lineWidth: 3)
                         )
                 }
             }

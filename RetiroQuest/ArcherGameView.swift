@@ -209,19 +209,12 @@ struct ArcherGameView: View {
         .background(Color(hex: 0x8FC4DB))
         .overlay(alignment: .top) {
             HStack {
-                Button {
+                ExitButton {
                     engine.stop()
                     onExit()
-                } label: {
-                    Text("✕ Sair")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
-                        .foregroundStyle(Theme.creme)
-                        .padding(.vertical, 9)
-                        .padding(.horizontal, 16)
-                        .background(Capsule().fill(Theme.serraDark.opacity(0.78)))
                 }
                 Spacer()
-                HUDChip(text: "🏹 \(engine.arrows)  ·  \(engine.points) pts")
+                HUDChip(text: "🏹 \(engine.arrows) · \(engine.points) pts")
             }
             .padding(.horizontal, 16)
         }
@@ -464,13 +457,14 @@ enum ArcherPainter {
     private static func drawNotice(_ ctx: inout GraphicsContext, text: String, w: CGFloat, h: CGFloat) {
         let resolved = ctx.resolve(
             Text(text)
-                .font(.system(size: 26, weight: .heavy, design: .rounded))
+                .font(Theme.px(12))
                 .foregroundColor(Theme.creme))
-        let tSize = resolved.measure(in: CGSize(width: 600, height: 100))
-        ctx.fill(Path(roundedRect: CGRect(x: w / 2 - tSize.width / 2 - 20, y: h * 0.47 - 23,
-                                          width: tSize.width + 40, height: 46),
-                      cornerRadius: 23),
-                 with: .color(Theme.serraDark.opacity(0.85)))
+        let tSize = resolved.measure(in: CGSize(width: w - 60, height: 200))
+        let box = CGRect(x: w / 2 - tSize.width / 2 - 16, y: h * 0.47 - tSize.height / 2 - 12,
+                         width: tSize.width + 32, height: tSize.height + 24)
+        ctx.fill(Path(box), with: .color(Theme.serraDark.opacity(0.92)))
+        ctx.stroke(Path(box.insetBy(dx: 2, dy: 2)), with: .color(Theme.creme), lineWidth: 2)
+        ctx.stroke(Path(box.insetBy(dx: 6, dy: 6)), with: .color(Theme.creme.opacity(0.35)), lineWidth: 1.5)
         ctx.draw(resolved, at: CGPoint(x: w / 2, y: h * 0.47), anchor: .center)
     }
 }

@@ -5,12 +5,15 @@ struct RetiroQuestApp: App {
     @StateObject private var app = AppState()
     @StateObject private var progress = GameProgress()
 
+    init() { PixelFont.register() }
+
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environmentObject(app)
                 .environmentObject(progress)
                 .preferredColorScheme(.light)
+                .crt()
         }
     }
 }

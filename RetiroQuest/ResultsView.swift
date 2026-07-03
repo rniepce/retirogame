@@ -21,16 +21,18 @@ struct ResultsView: View {
                            startRadius: 40, endRadius: 500)
                 .ignoresSafeArea()
 
-            VStack(spacing: 8) {
+            VStack(spacing: 12) {
                 if let id = poi.minigame {
                     Text("\(poi.name) — \(MinigameCatalog.info(id).title)".uppercased())
-                        .font(.system(size: 12, weight: .bold, design: .rounded))
-                        .kerning(2)
+                        .font(Theme.px(8))
                         .foregroundStyle(Theme.grama)
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(5)
                 }
-                Text(title)
-                    .font(.system(size: 34, weight: .heavy, design: .rounded))
+                Text(title.uppercased())
+                    .font(Theme.px(20))
                     .foregroundStyle(Theme.creme)
+                    .shadow(color: Theme.tinta, radius: 0, x: 3, y: 3)
 
                 Text(starsText(result.stars))
                     .font(.system(size: 52))
@@ -38,10 +40,11 @@ struct ResultsView: View {
                     .foregroundStyle(Theme.ouro)
                     .padding(.vertical, 8)
 
-                Text(result.phrase)
-                    .font(.system(size: 17, design: .rounded))
+                Text(result.phrase.uppercased())
+                    .font(Theme.px(8))
                     .foregroundStyle(Theme.creme.opacity(0.8))
                     .multilineTextAlignment(.center)
+                    .lineSpacing(6)
                     .frame(maxWidth: 300)
                     .padding(.bottom, 26)
 

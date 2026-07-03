@@ -39,8 +39,7 @@ struct MemoryGameView: View {
 
             VStack(spacing: 14) {
                 Text("MEMÓRIA DOS VITRAIS")
-                    .font(.system(size: 13, weight: .heavy, design: .rounded))
-                    .kerning(2)
+                    .font(Theme.px(10))
                     .foregroundStyle(Theme.ouro)
                     .padding(.top, 60)
 
@@ -56,16 +55,7 @@ struct MemoryGameView: View {
         }
         .overlay(alignment: .top) {
             HStack {
-                Button {
-                    onExit()
-                } label: {
-                    Text("✕ Sair")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
-                        .foregroundStyle(Theme.creme)
-                        .padding(.vertical, 9)
-                        .padding(.horizontal, 16)
-                        .background(Capsule().fill(Theme.serraDark.opacity(0.78)))
-                }
+                ExitButton(action: onExit)
                 Spacer()
                 HUDChip(text: "🪟 \(moves) jogadas")
             }

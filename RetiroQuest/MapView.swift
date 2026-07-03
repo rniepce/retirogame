@@ -22,12 +22,19 @@ struct MapView: View {
                 .padding(.horizontal, 16)
                 Spacer()
                 if showHint {
-                    Text("Toque em um lugar do mapa para caminhar até lá")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    Text("TOQUE NUM LUGAR DO MAPA\nPARA CAMINHAR ATÉ LÁ")
+                        .font(Theme.px(8))
+                        .multilineTextAlignment(.center)
+                        .lineSpacing(5)
                         .foregroundStyle(Theme.creme)
                         .padding(.vertical, 10)
-                        .padding(.horizontal, 18)
-                        .background(Capsule().fill(Theme.serraDark.opacity(0.82)))
+                        .padding(.horizontal, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 3)
+                                .fill(Theme.serraDark.opacity(0.88))
+                                .overlay(RoundedRectangle(cornerRadius: 3)
+                                    .strokeBorder(Theme.creme.opacity(0.7), lineWidth: 2))
+                        )
                         .padding(.bottom, 16)
                         .transition(.opacity)
                 }
@@ -77,16 +84,18 @@ struct POICard: View {
                 .ignoresSafeArea()
                 .onTapGesture(perform: onClose)
 
-            VStack(spacing: 6) {
+            VStack(spacing: 10) {
                 Text(poi.icon).font(.system(size: 44))
-                Text(info.map { "\(poi.name) — \($0.title)" } ?? poi.name)
-                    .font(.system(size: 24, weight: .heavy, design: .rounded))
+                Text((info.map { "\(poi.name) — \($0.title)" } ?? poi.name).uppercased())
+                    .font(Theme.px(12))
                     .foregroundStyle(Theme.tinta)
                     .multilineTextAlignment(.center)
+                    .lineSpacing(5)
                 Text(info?.description ?? poi.blurb)
-                    .font(.system(size: 15, design: .rounded))
+                    .font(Theme.px(8))
                     .foregroundStyle(Color(hex: 0x6B5B44))
                     .multilineTextAlignment(.center)
+                    .lineSpacing(5)
                 Text(info != nil ? starsText(earnedStars) : "🔒")
                     .font(.system(size: 22))
                     .padding(.bottom, 8)
@@ -105,8 +114,11 @@ struct POICard: View {
             .padding(26)
             .frame(maxWidth: 440)
             .background(
-                UnevenRoundedRectangle(topLeadingRadius: 26, topTrailingRadius: 26)
+                UnevenRoundedRectangle(topLeadingRadius: 8, topTrailingRadius: 8)
                     .fill(Theme.creme)
+                    .overlay(alignment: .top) {
+                        Rectangle().fill(Theme.tinta).frame(height: 4)
+                    }
                     .ignoresSafeArea(edges: .bottom)
             )
             .transition(.move(edge: .bottom))
