@@ -1,0 +1,403 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0B671F290F9BAA3A7CD5D72A /* RetiroQuestApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF0F1BD19E19E9A2E369EE2 /* RetiroQuestApp.swift */; };
+		10AF0144C8F5E4ADD8E77456 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4821A1EFEA588DEB7B89B7AB /* Assets.xcassets */; };
+		1DF221838C832BA679A5CA2A /* FindCatGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8917A17367DB1B34F65C177 /* FindCatGameView.swift */; };
+		20A8A820CC691D772F2DB90D /* ResultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A64401DF432D3EC933C600A7 /* ResultsView.swift */; };
+		2F702FE24806832B7A667BCC /* GameKitCommon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1981F4DA9C120FBEF1ACC8D6 /* GameKitCommon.swift */; };
+		3554D4C0515C15954641409E /* SkateGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FB38F41DEC58FF80A1D04D /* SkateGameView.swift */; };
+		3F978B2D2996FEF9B7DEB203 /* TreasureGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E82E1BDA14843EC5107D26B /* TreasureGameView.swift */; };
+		58A8AF1867CDE0F51535FD54 /* AvatarCreatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58545E1D9C06CE67552A4BC /* AvatarCreatorView.swift */; };
+		5B92D1E6178ACF5B337E02FD /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E752CC7B19BDBA0435279A4 /* MapView.swift */; };
+		5C58B8EF75B1E461342E585C /* BMXGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82DF4AA87654775377ACAF9F /* BMXGameView.swift */; };
+		64ECE21D5FB1D463D2413769 /* BasketballGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE63D2133A417F438B1B929B /* BasketballGameView.swift */; };
+		6CB93C81BEBB404777597C6E /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C0D4F5286F2BA35694A6DB /* AvatarView.swift */; };
+		7B74D176EF175A1F1211398E /* MemoryGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69AF8C562BC6F941713B8A3 /* MemoryGameView.swift */; };
+		83DF5558322726C3F4172A85 /* DodgeballGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 455DCD173A3CCF422922ADCD /* DodgeballGameView.swift */; };
+		8EF676E21EB5C29B30D327DE /* HarvestGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9CE7EDCEDBFCF3EEC7E80F /* HarvestGameView.swift */; };
+		8FFDE322C98A065467BC9ACE /* CondoMapScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCADDB945A45474980376C22 /* CondoMapScene.swift */; };
+		9CD40E602F7692908CC26E5E /* KiteGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEB7BC84C57738DBC1336C9D /* KiteGameView.swift */; };
+		ADB84FEFCF90506427893DE3 /* VolleyGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DFC1D5F0DB04A00ED30B327 /* VolleyGameView.swift */; };
+		B509E9445D421F38052EE3BF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = BADF48F80C4F19D3850B8365 /* Theme.swift */; };
+		C44C06C22F96E50B6C865C78 /* TitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE236750AFE160844552A27 /* TitleView.swift */; };
+		C5A65D847E5499DC9BEF6D8D /* FreeKickGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4127D48FD6D6EF6BFE670EE5 /* FreeKickGameView.swift */; };
+		DC6AF7E0066A28E046E3ADE0 /* FishingGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F99BB7D40AE91E7B7BCC3EA /* FishingGameView.swift */; };
+		E1426741E8B22FAC3CA9CDA2 /* ArcherGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 917D2E518C215E212CF73759 /* ArcherGameView.swift */; };
+		E9484BBAF970C930FB41333E /* LaserGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 428E0F4C67888E5023F7B302 /* LaserGameView.swift */; };
+		F2803ADCE055AE80F93D4BC7 /* SoapboxGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E16A19687C06DFE430F89A /* SoapboxGameView.swift */; };
+		F58125636EE417CEEAB32325 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B703DB53445A1061116AD4B /* Models.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0AE236750AFE160844552A27 /* TitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleView.swift; sourceTree = "<group>"; };
+		14FB38F41DEC58FF80A1D04D /* SkateGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkateGameView.swift; sourceTree = "<group>"; };
+		1981F4DA9C120FBEF1ACC8D6 /* GameKitCommon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameKitCommon.swift; sourceTree = "<group>"; };
+		2B703DB53445A1061116AD4B /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		3E752CC7B19BDBA0435279A4 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		4127D48FD6D6EF6BFE670EE5 /* FreeKickGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeKickGameView.swift; sourceTree = "<group>"; };
+		428E0F4C67888E5023F7B302 /* LaserGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaserGameView.swift; sourceTree = "<group>"; };
+		455DCD173A3CCF422922ADCD /* DodgeballGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DodgeballGameView.swift; sourceTree = "<group>"; };
+		4821A1EFEA588DEB7B89B7AB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4DFC1D5F0DB04A00ED30B327 /* VolleyGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolleyGameView.swift; sourceTree = "<group>"; };
+		82DF4AA87654775377ACAF9F /* BMXGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMXGameView.swift; sourceTree = "<group>"; };
+		8A9CE7EDCEDBFCF3EEC7E80F /* HarvestGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HarvestGameView.swift; sourceTree = "<group>"; };
+		8F99BB7D40AE91E7B7BCC3EA /* FishingGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishingGameView.swift; sourceTree = "<group>"; };
+		917D2E518C215E212CF73759 /* ArcherGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcherGameView.swift; sourceTree = "<group>"; };
+		91E16A19687C06DFE430F89A /* SoapboxGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoapboxGameView.swift; sourceTree = "<group>"; };
+		9C0CA6414DC5DC733599A72D /* RetiroQuest.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = RetiroQuest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E82E1BDA14843EC5107D26B /* TreasureGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreasureGameView.swift; sourceTree = "<group>"; };
+		A64401DF432D3EC933C600A7 /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
+		A8917A17367DB1B34F65C177 /* FindCatGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindCatGameView.swift; sourceTree = "<group>"; };
+		B58545E1D9C06CE67552A4BC /* AvatarCreatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarCreatorView.swift; sourceTree = "<group>"; };
+		BADF48F80C4F19D3850B8365 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		BCADDB945A45474980376C22 /* CondoMapScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CondoMapScene.swift; sourceTree = "<group>"; };
+		CEF0F1BD19E19E9A2E369EE2 /* RetiroQuestApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetiroQuestApp.swift; sourceTree = "<group>"; };
+		DEB7BC84C57738DBC1336C9D /* KiteGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KiteGameView.swift; sourceTree = "<group>"; };
+		E69AF8C562BC6F941713B8A3 /* MemoryGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryGameView.swift; sourceTree = "<group>"; };
+		E8C0D4F5286F2BA35694A6DB /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
+		EE63D2133A417F438B1B929B /* BasketballGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasketballGameView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		4AA2219C4ED543ECD3A353DE = {
+			isa = PBXGroup;
+			children = (
+				8987A2B56D6522220FE12A41 /* RetiroQuest */,
+				5F6768CDAB39FE42CC00CA4C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		5F6768CDAB39FE42CC00CA4C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9C0CA6414DC5DC733599A72D /* RetiroQuest.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8987A2B56D6522220FE12A41 /* RetiroQuest */ = {
+			isa = PBXGroup;
+			children = (
+				917D2E518C215E212CF73759 /* ArcherGameView.swift */,
+				4821A1EFEA588DEB7B89B7AB /* Assets.xcassets */,
+				B58545E1D9C06CE67552A4BC /* AvatarCreatorView.swift */,
+				E8C0D4F5286F2BA35694A6DB /* AvatarView.swift */,
+				EE63D2133A417F438B1B929B /* BasketballGameView.swift */,
+				82DF4AA87654775377ACAF9F /* BMXGameView.swift */,
+				BCADDB945A45474980376C22 /* CondoMapScene.swift */,
+				455DCD173A3CCF422922ADCD /* DodgeballGameView.swift */,
+				A8917A17367DB1B34F65C177 /* FindCatGameView.swift */,
+				8F99BB7D40AE91E7B7BCC3EA /* FishingGameView.swift */,
+				4127D48FD6D6EF6BFE670EE5 /* FreeKickGameView.swift */,
+				1981F4DA9C120FBEF1ACC8D6 /* GameKitCommon.swift */,
+				8A9CE7EDCEDBFCF3EEC7E80F /* HarvestGameView.swift */,
+				DEB7BC84C57738DBC1336C9D /* KiteGameView.swift */,
+				428E0F4C67888E5023F7B302 /* LaserGameView.swift */,
+				3E752CC7B19BDBA0435279A4 /* MapView.swift */,
+				E69AF8C562BC6F941713B8A3 /* MemoryGameView.swift */,
+				2B703DB53445A1061116AD4B /* Models.swift */,
+				A64401DF432D3EC933C600A7 /* ResultsView.swift */,
+				CEF0F1BD19E19E9A2E369EE2 /* RetiroQuestApp.swift */,
+				14FB38F41DEC58FF80A1D04D /* SkateGameView.swift */,
+				91E16A19687C06DFE430F89A /* SoapboxGameView.swift */,
+				BADF48F80C4F19D3850B8365 /* Theme.swift */,
+				0AE236750AFE160844552A27 /* TitleView.swift */,
+				9E82E1BDA14843EC5107D26B /* TreasureGameView.swift */,
+				4DFC1D5F0DB04A00ED30B327 /* VolleyGameView.swift */,
+			);
+			path = RetiroQuest;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D2D8654B1819236B99EAA623 /* RetiroQuest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 67BD8A2391851EAD1D537634 /* Build configuration list for PBXNativeTarget "RetiroQuest" */;
+			buildPhases = (
+				75CF79483347AF3FC437414B /* Sources */,
+				77EF009C0759BFF097740523 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RetiroQuest;
+			packageProductDependencies = (
+			);
+			productName = RetiroQuest;
+			productReference = 9C0CA6414DC5DC733599A72D /* RetiroQuest.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D118289E879FC44D438CE35B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+			};
+			buildConfigurationList = 599D23F193F020C459BB5475 /* Build configuration list for PBXProject "RetiroQuest" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 4AA2219C4ED543ECD3A353DE;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D2D8654B1819236B99EAA623 /* RetiroQuest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		77EF009C0759BFF097740523 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10AF0144C8F5E4ADD8E77456 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		75CF79483347AF3FC437414B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E1426741E8B22FAC3CA9CDA2 /* ArcherGameView.swift in Sources */,
+				58A8AF1867CDE0F51535FD54 /* AvatarCreatorView.swift in Sources */,
+				6CB93C81BEBB404777597C6E /* AvatarView.swift in Sources */,
+				5C58B8EF75B1E461342E585C /* BMXGameView.swift in Sources */,
+				64ECE21D5FB1D463D2413769 /* BasketballGameView.swift in Sources */,
+				8FFDE322C98A065467BC9ACE /* CondoMapScene.swift in Sources */,
+				83DF5558322726C3F4172A85 /* DodgeballGameView.swift in Sources */,
+				1DF221838C832BA679A5CA2A /* FindCatGameView.swift in Sources */,
+				DC6AF7E0066A28E046E3ADE0 /* FishingGameView.swift in Sources */,
+				C5A65D847E5499DC9BEF6D8D /* FreeKickGameView.swift in Sources */,
+				2F702FE24806832B7A667BCC /* GameKitCommon.swift in Sources */,
+				8EF676E21EB5C29B30D327DE /* HarvestGameView.swift in Sources */,
+				9CD40E602F7692908CC26E5E /* KiteGameView.swift in Sources */,
+				E9484BBAF970C930FB41333E /* LaserGameView.swift in Sources */,
+				5B92D1E6178ACF5B337E02FD /* MapView.swift in Sources */,
+				7B74D176EF175A1F1211398E /* MemoryGameView.swift in Sources */,
+				F58125636EE417CEEAB32325 /* Models.swift in Sources */,
+				20A8A820CC691D772F2DB90D /* ResultsView.swift in Sources */,
+				0B671F290F9BAA3A7CD5D72A /* RetiroQuestApp.swift in Sources */,
+				3554D4C0515C15954641409E /* SkateGameView.swift in Sources */,
+				F2803ADCE055AE80F93D4BC7 /* SoapboxGameView.swift in Sources */,
+				B509E9445D421F38052EE3BF /* Theme.swift in Sources */,
+				C44C06C22F96E50B6C865C78 /* TitleView.swift in Sources */,
+				3F978B2D2996FEF9B7DEB203 /* TreasureGameView.swift in Sources */,
+				ADB84FEFCF90506427893DE3 /* VolleyGameView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		08F8743C286A482C424573FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		09EE1F5738EACC5FC19909F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Retiro Quest";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = br.com.rafael.RetiroQuest;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		190508FDCA647A3B79B6012D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Retiro Quest";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = br.com.rafael.RetiroQuest;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		48C80E3F730D5D0516889641 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		599D23F193F020C459BB5475 /* Build configuration list for PBXProject "RetiroQuest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				08F8743C286A482C424573FF /* Debug */,
+				48C80E3F730D5D0516889641 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		67BD8A2391851EAD1D537634 /* Build configuration list for PBXNativeTarget "RetiroQuest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				09EE1F5738EACC5FC19909F8 /* Debug */,
+				190508FDCA647A3B79B6012D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D118289E879FC44D438CE35B /* Project object */;
+}
