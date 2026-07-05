@@ -28,6 +28,8 @@ final class FindCatEngine: MiniEngine {
     ]
     private(set) var penalty = 0.0
     private(set) var found = 0
+    private(set) var meow: (index: Int, until: Double)?
+    private var nextMeow = 6.0
 
     var remaining: Double { Self.duration - elapsed - penalty }
 
@@ -47,6 +49,16 @@ final class FindCatEngine: MiniEngine {
             finish(points: found * 10, maxPoints: 50)
             return
         }
+        // de tempos em tempos um gato escondido dá um miado de dica
+        if elapsed > nextMeow {
+            nextMeow = elapsed + 7
+            let hidden = hideouts.indices.filter { hideouts[$0].active && !hideouts[$0].found }
+            if let i = hidden.randomElement() {
+                meow = (i, elapsed + 1.2)
+                Haptics.light()
+            }
+        }
+        if let m = meow, elapsed > m.until { meow = nil }
         setHUD("🐱 \(found)/5 · \(Int(remaining))s")
     }
 
@@ -148,6 +160,23 @@ enum FindCatPainter {
                                control: CGPoint(x: x - 3, y: h * 0.82))
         }
         ctx.stroke(tufts, with: .color(Color(hex: 0x4E8F5C)), style: StrokeStyle(lineWidth: 4, lineCap: .round))
+
+        // balãozinho de miado (dica)
+        if let m = e.meow, m.index < e.hideouts.count {
+            let spot = e.hideouts[m.index].rel
+            let c = CGPoint(x: w * spot.x + 26, y: h * spot.y - 34)
+            let box = CGRect(x: c.x - 26, y: c.y - 12, width: 52, height: 24)
+            ctx.fill(Path(roundedRect: box, cornerRadius: 3), with: .color(Theme.creme))
+            ctx.stroke(Path(roundedRect: box, cornerRadius: 3), with: .color(Theme.tinta), lineWidth: 2)
+            ctx.fill(Path { p in
+                p.move(to: CGPoint(x: c.x - 12, y: box.maxY))
+                p.addLine(to: CGPoint(x: c.x - 18, y: box.maxY + 8))
+                p.addLine(to: CGPoint(x: c.x - 4, y: box.maxY))
+                p.closeSubpath()
+            }, with: .color(Theme.creme))
+            ctx.draw(Text("MIAU!").font(Theme.px(8)).foregroundColor(Theme.tinta),
+                     at: c, anchor: .center)
+        }
 
         GamePaint.timeBar(&ctx, size: size, remaining: e.remaining, total: FindCatEngine.duration)
     }

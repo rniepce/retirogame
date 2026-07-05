@@ -11,7 +11,6 @@ final class BasketballEngine: MiniEngine {
         var t: Double = 0
         let targetX: Double
         let depth: Double     // erro de profundidade (força)
-        let outcome: Outcome
     }
     enum Outcome { case swish, bucket, rim, miss }
 
@@ -19,9 +18,14 @@ final class BasketballEngine: MiniEngine {
     private(set) var score = 0
     private(set) var shot: Shot?
     private var nextReady = 0.0
+    private var driftPhase = 0.0
 
     var ballStart: CGPoint { CGPoint(x: viewSize.width / 2, y: viewSize.height * 0.85) }
-    var rimCenter: CGPoint { CGPoint(x: viewSize.width / 2, y: viewSize.height * 0.27) }
+    /// A partir da 4ª bola a cesta desliza de um lado para o outro.
+    var rimCenter: CGPoint {
+        let drift = ball >= 3 ? sin(driftPhase) * viewSize.width * 0.16 : 0
+        return CGPoint(x: viewSize.width / 2 + drift, y: viewSize.height * 0.27)
+    }
 
     override func didStart() {
         setHUD("🏀 1/\(Self.total) · 0 pts")
@@ -29,6 +33,7 @@ final class BasketballEngine: MiniEngine {
     }
 
     override func tick(dt: Double) {
+        if ball >= 3 { driftPhase += dt * 1.5 }
         guard var s = shot else { return }
         s.t += dt / Self.flightTime
         if s.t >= 1 {
@@ -47,26 +52,29 @@ final class BasketballEngine: MiniEngine {
         let power = min(max(hypot(dx, dy) / (h * 0.55), 0.2), 1.2)
         let targetX = ballStart.x + dx * 1.15
         let depth = (power - Self.sweetPower) * h * 0.4
-        let offX = abs(targetX - rimCenter.x)
-        let offD = abs(depth)
+        ball += 1
+        shot = Shot(targetX: targetX, depth: depth)
+        Haptics.tap()
+    }
+
+    private func resolve(_ s: Shot) {
+        // resultado julgado na chegada — com a cesta onde ela ESTÁ agora
+        let h = viewSize.height
+        let offX = abs(s.targetX - rimCenter.x)
+        let offD = abs(s.depth)
         let outcome: Outcome
         if offX < 14 && offD < h * 0.045 { outcome = .swish }
         else if offX < 30 && offD < h * 0.09 { outcome = .bucket }
         else if offX < 48 && offD < h * 0.13 { outcome = .rim }
         else { outcome = .miss }
-        ball += 1
-        shot = Shot(targetX: targetX, depth: depth, outcome: outcome)
-        Haptics.tap()
-    }
-
-    private func resolve(_ s: Shot) {
-        switch s.outcome {
+        switch outcome {
         case .swish: score += 10; say("🔥 SÓ REDE! +10", for: 1.1); Haptics.success()
         case .bucket: score += 6; say("🏀 Cesta! +6", for: 1.1); Haptics.success()
         case .rim: score += 2; say("No aro… +2"); Haptics.tap()
         case .miss: say("Errou tudo!"); Haptics.error()
         }
         nextReady = elapsed + 0.6
+        if ball == 3 { say("🏀 A CESTA VAI ANDAR!", for: 1.4) }
         setHUD("🏀 \(min(ball + 1, Self.total))/\(Self.total) · \(score) pts")
         if ball >= Self.total {
             let final = score

@@ -12,9 +12,12 @@ final class CondoMapScene: SKScene {
     private var built = false
     private var player: SKNode?
     private var playerBody: SKNode?
+    private var legL: SKShapeNode?
+    private var legR: SKShapeNode?
     private var pinNodes: [String: SKNode] = [:]
+    private var net = RoadNet()
 
-    private let walkSpeed: CGFloat = 150 // unidades de mundo por segundo
+    private let walkSpeed: CGFloat = 190 // unidades de mundo por segundo
 
     override init(size: CGSize) {
         super.init(size: size)
@@ -135,6 +138,8 @@ final class CondoMapScene: SKScene {
             road.zPosition = 2
             addChild(road)
         }
+        // malha de caminhada: as mesmas ruas viram um grafo para o pathfinding
+        for pts in roads { net.addPolyline(RoadNet.flattenQuads(pts)) }
         // faixa tracejada da rua principal
         let dashed = quadPath(roads[0]).copy(dashingWithPhase: 0, lengths: [10, 14])
         let dash = SKShapeNode(path: dashed)
@@ -531,7 +536,8 @@ final class CondoMapScene: SKScene {
     // MARK: - Jogador
 
     private func rebuildPlayer() {
-        let position = player?.position ?? World.playerStart
+        let fallback = net.points.isEmpty ? World.playerStart : net.points[net.nearest(World.playerStart)]
+        let position = player?.position ?? fallback
         player?.removeFromParent()
 
         let node = SKNode()
@@ -546,6 +552,21 @@ final class CondoMapScene: SKScene {
 
         let body = SKNode()
         node.addChild(body)
+
+        // perninhas (animadas no ciclo de caminhada)
+        let legColor = avatar.gender == .fem ? avatar.skinUIColor : UIColor(hex: 0x40474F)
+        let left = SKShapeNode(rect: CGRect(x: -6, y: 0, width: 4.5, height: 9), cornerRadius: 2)
+        left.fillColor = legColor
+        left.strokeColor = .clear
+        left.position = CGPoint(x: 0, y: -24)
+        body.addChild(left)
+        let right = SKShapeNode(rect: CGRect(x: 1.5, y: 0, width: 4.5, height: 9), cornerRadius: 2)
+        right.fillColor = legColor
+        right.strokeColor = .clear
+        right.position = CGPoint(x: 0, y: -24)
+        body.addChild(right)
+        legL = left
+        legR = right
 
         // corpo
         if avatar.gender == .fem {
@@ -617,7 +638,7 @@ final class CondoMapScene: SKScene {
         addChild(node)
     }
 
-    // MARK: - Toques e caminhada
+    // MARK: - Toques e caminhada (sempre pelas ruas)
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
@@ -628,27 +649,154 @@ final class CondoMapScene: SKScene {
         }) {
             walk(to: CGPoint(x: poi.position.x + 26, y: poi.position.y - 8), poi: poi)
         } else {
-            let dest = CGPoint(x: min(max(loc.x, 140), 780), y: min(max(loc.y, 20), 1040))
-            walk(to: dest, poi: nil)
+            walk(to: loc, poi: nil)
         }
     }
 
+    /// Caminha pela malha de ruas até o ponto de rua mais próximo do destino.
+    /// Se for um POI, dá o último passo fora da rua até a "porta" do lugar.
     private func walk(to dest: CGPoint, poi: POI?) {
-        guard let player else { return }
+        guard let player, !net.points.isEmpty else { return }
         player.removeAction(forKey: "walk")
 
-        let dist = hypot(dest.x - player.position.x, dest.y - player.position.y)
-        guard dist > 2 else {
+        let startIdx = net.nearest(player.position)
+        let endIdx = net.nearest(dest)
+        var waypoints = net.path(from: startIdx, to: endIdx)
+        if let poi {
+            waypoints.append(CGPoint(x: poi.position.x + 26, y: poi.position.y - 8))
+        }
+
+        var actions: [SKAction] = []
+        var cursor = player.position
+        for wp in waypoints {
+            let d = hypot(wp.x - cursor.x, wp.y - cursor.y)
+            guard d > 2 else { continue }
+            let from = cursor
+            actions.append(SKAction.run { [weak self] in
+                self?.playerBody?.xScale = wp.x < from.x ? -1 : 1
+            })
+            actions.append(SKAction.move(to: wp, duration: d / walkSpeed))
+            cursor = wp
+        }
+        actions.append(SKAction.run { [weak self] in
+            self?.stopWalkCycle()
+            if let poi { self?.onArrive?(poi) }
+        })
+        guard actions.count > 1 else {
             if let poi { onArrive?(poi) }
             return
         }
-        playerBody?.xScale = dest.x < player.position.x ? -1 : 1
+        startWalkCycle()
+        player.run(.sequence(actions), withKey: "walk")
+    }
 
-        let move = SKAction.move(to: dest, duration: dist / walkSpeed)
-        let arrive = SKAction.run { [weak self] in
-            if let poi { self?.onArrive?(poi) }
+    // MARK: - Ciclo de caminhada (perninhas + passada)
+
+    private func startWalkCycle() {
+        guard let body = playerBody else { return }
+        body.removeAction(forKey: "bob")
+        let up = SKAction.moveBy(x: 0, y: 2.2, duration: 0.11)
+        up.timingMode = .easeInEaseOut
+        body.run(.repeatForever(.sequence([up, up.reversed()])), withKey: "walkBob")
+
+        let stepUp = SKAction.moveBy(x: 0, y: 3, duration: 0.11)
+        let stepDown = stepUp.reversed()
+        legL?.run(.repeatForever(.sequence([stepUp, stepDown])), withKey: "step")
+        legR?.run(.repeatForever(.sequence([stepDown, stepUp])), withKey: "step")
+    }
+
+    private func stopWalkCycle() {
+        guard let body = playerBody else { return }
+        body.removeAction(forKey: "walkBob")
+        legL?.removeAction(forKey: "step")
+        legR?.removeAction(forKey: "step")
+        legL?.position.y = -24
+        legR?.position.y = -24
+        let up = SKAction.moveBy(x: 0, y: 1.5, duration: 0.5)
+        up.timingMode = .easeInEaseOut
+        body.run(.repeatForever(.sequence([up, up.reversed()])), withKey: "bob")
+    }
+}
+
+/// Grafo das ruas: pontos amostrados das curvas + Dijkstra para achar o caminho.
+struct RoadNet {
+    private(set) var points: [CGPoint] = []
+    private var adjacency: [[Int]] = []
+
+    /// Amostra uma polilinha de curvas quadráticas (mesmo formato do desenho).
+    static func flattenQuads(_ pts: [CGPoint]) -> [CGPoint] {
+        guard !pts.isEmpty else { return [] }
+        var out: [CGPoint] = [pts[0]]
+        var i = 1
+        while i + 1 < pts.count {
+            let p0 = out.last!, c = pts[i], p1 = pts[i + 1]
+            for step in 1...6 {
+                let t = CGFloat(step) / 6
+                let mt = 1 - t
+                out.append(CGPoint(x: mt * mt * p0.x + 2 * mt * t * c.x + t * t * p1.x,
+                                   y: mt * mt * p0.y + 2 * mt * t * c.y + t * t * p1.y))
+            }
+            i += 2
         }
-        player.run(.sequence([move, arrive]), withKey: "walk")
+        return out
+    }
+
+    mutating func addPolyline(_ pts: [CGPoint]) {
+        var prev: Int?
+        for p in pts {
+            let idx = indexFor(p)
+            if let pr = prev, pr != idx, !adjacency[pr].contains(idx) {
+                adjacency[pr].append(idx)
+                adjacency[idx].append(pr)
+            }
+            prev = idx
+        }
+    }
+
+    private mutating func indexFor(_ p: CGPoint) -> Int {
+        for (i, q) in points.enumerated() where hypot(q.x - p.x, q.y - p.y) < 14 { return i }
+        points.append(p)
+        adjacency.append([])
+        return points.count - 1
+    }
+
+    func nearest(_ p: CGPoint) -> Int {
+        var best = 0
+        var bestDist = CGFloat.infinity
+        for (i, q) in points.enumerated() {
+            let d = hypot(q.x - p.x, q.y - p.y)
+            if d < bestDist { bestDist = d; best = i }
+        }
+        return best
+    }
+
+    func path(from a: Int, to b: Int) -> [CGPoint] {
+        guard a != b else { return [points[b]] }
+        var dist = Array(repeating: CGFloat.infinity, count: points.count)
+        var previous = Array(repeating: -1, count: points.count)
+        var visited = Array(repeating: false, count: points.count)
+        dist[a] = 0
+        for _ in 0..<points.count {
+            var u = -1
+            var du = CGFloat.infinity
+            for i in 0..<points.count where !visited[i] && dist[i] < du {
+                u = i; du = dist[i]
+            }
+            if u == -1 || u == b { break }
+            visited[u] = true
+            for v in adjacency[u] {
+                let nd = du + hypot(points[u].x - points[v].x, points[u].y - points[v].y)
+                if nd < dist[v] { dist[v] = nd; previous[v] = u }
+            }
+        }
+        guard dist[b] < .infinity else { return [points[b]] }
+        var out: [CGPoint] = []
+        var cur = b
+        while cur != -1 {
+            out.append(points[cur])
+            cur = previous[cur]
+        }
+        return out.reversed()
     }
 }
 

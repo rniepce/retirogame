@@ -18,6 +18,10 @@ final class FishingEngine: MiniEngine {
     var bobber: CGPoint { CGPoint(x: viewSize.width * 0.45, y: viewSize.height * 0.52) }
     var isFakeNow: Bool { fakes.contains { abs(elapsed - $0) < 0.25 } }
     var isBiting: Bool { phase == .bite }
+    /// A sombra do peixe aparece rondando a boia pouco antes da fisgada real.
+    var biteSoon: Bool {
+        phase == .waiting && biteAt - elapsed < 1.3 && biteAt - elapsed > 0
+    }
 
     override func didStart() {
         setHUD("🎣 \(castsLeft) · 0 pts")
@@ -68,8 +72,13 @@ final class FishingEngine: MiniEngine {
             Haptics.error()
             consumeCast()
         case .bite:
+            // reflexo rápido (< 0,35 s) é a única chance de peixe lendário
+            let reaction = elapsed - biteAt
+            let legendaryChance = reaction < 0.35 ? 0.2 : 0.0
             let roll = Double.random(in: 0...1)
-            let fish: (String, Int) = roll < 0.1 ? ("🐡", 16) : (roll < 0.4 ? ("🐠", 10) : ("🐟", 6))
+            let fish: (String, Int) = roll < legendaryChance
+                ? ("🐡", 16)
+                : (roll < legendaryChance + 0.3 ? ("🐠", 10) : ("🐟", 6))
             caught = fish
             score += fish.1
             phase = .showing
@@ -128,6 +137,14 @@ enum FishingPainter {
         ctx.stroke(Path { p in
             p.move(to: CGPoint(x: w * 0.88, y: h * 0.88)); p.addLine(to: rodTip)
         }, with: .color(Color(hex: 0x6B4A2B)), style: StrokeStyle(lineWidth: 5, lineCap: .round))
+
+        // sombra do peixe rondando a boia (aviso de que vem fisgada)
+        if e.biteSoon {
+            let ang = e.elapsed * 3
+            let sc = CGPoint(x: e.bobber.x + cos(ang) * 26, y: e.bobber.y + 14 + sin(ang) * 8)
+            ctx.fill(Path(ellipseIn: CGRect(x: sc.x - 14, y: sc.y - 5, width: 28, height: 10)),
+                     with: .color(.black.opacity(0.22)))
+        }
 
         // boia (mexe nas beliscadas, afunda na fisgada)
         var b = e.bobber

@@ -17,8 +17,10 @@ final class FreeKickEngine: MiniEngine {
 
     private(set) var kick = 0
     private(set) var score = 0
+    private(set) var goals = 0
     private(set) var shot: Shot?
     private(set) var trail: [CGPoint] = []
+    private(set) var flightTrail: [CGPoint] = []
     private(set) var keeperDive: Double = 0   // -1..1 lado do mergulho
     private var nextReady = 0.0
 
@@ -40,6 +42,10 @@ final class FreeKickEngine: MiniEngine {
             resolve(s)
         } else {
             shot = s
+            if let (pos, _) = ballPosition(size: viewSize) {
+                flightTrail.append(pos)
+                if flightTrail.count > 18 { flightTrail.removeFirst() }
+            }
         }
     }
 
@@ -82,6 +88,7 @@ final class FreeKickEngine: MiniEngine {
         let outcome = judge(targetX: targetX, curve: curve, power: Double(power))
         kick += 1
         keeperDive = targetX < viewSize.width / 2 ? -1 : 1
+        flightTrail = []
         shot = Shot(targetX: targetX, curve: curve, power: power, outcome: outcome)
         Haptics.tap()
     }
@@ -101,8 +108,8 @@ final class FreeKickEngine: MiniEngine {
         let off = abs(targetX - center)
         if abs(off - goalHalf) < 9 { return .post }
         if off > goalHalf { return .out }
-        // goleiro: chute forte no canto é indefensável
-        let reach = goalHalf * (1.18 - power)
+        // goleiro: chute forte no canto é indefensável — mas ele melhora a cada gol
+        let reach = goalHalf * (1.18 - power) * (1 + 0.15 * Double(goals))
         if off < reach { return .saved }
         return .goal(off > goalHalf * 0.55 ? 10 : 8)
     }
@@ -111,7 +118,9 @@ final class FreeKickEngine: MiniEngine {
         switch s.outcome {
         case .goal(let pts):
             score += pts
+            goals += 1
             say(pts == 10 ? "⚽ GOLAÇO NO CANTO! +10" : "⚽ GOL! +8", for: 1.2)
+            if goals == 2 { say("🧤 O goleiro acordou!", for: 1.2) }
             Haptics.success()
         case .saved: say("🧤 Defendeu!"); Haptics.error()
         case .blocked: say("🧱 Na barreira!"); Haptics.error()
@@ -204,6 +213,12 @@ enum FreeKickPainter {
                        style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
         }
 
+        // rastro do voo da bola
+        for (i, dot) in e.flightTrail.enumerated() {
+            let alpha = Double(i) / Double(max(e.flightTrail.count, 1)) * 0.4
+            ctx.fill(Path(ellipseIn: CGRect(x: dot.x - 3, y: dot.y - 3, width: 6, height: 6)),
+                     with: .color(Theme.creme.opacity(alpha)))
+        }
         // bola
         if let (pos, scale) = e.ballPosition(size: size) {
             Px.draw(&ctx, Px.soccer, at: pos, pixel: 5.75 * scale)

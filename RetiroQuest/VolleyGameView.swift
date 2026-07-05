@@ -4,15 +4,17 @@ import SwiftUI
 /// chega ao anel para fazer o levantamento perfeito. 8 bolas.
 final class VolleyEngine: MiniEngine {
     static let total = 8
-    static let flight = 1.4
 
     private(set) var ballIndex = 0
     private(set) var score = 0
     private(set) var ballStart = 1.2
     private(set) var resolved = false
+    private(set) var contactRel = CGPoint(x: 0.68, y: 0.42)
     private var endAt = Double.infinity
 
-    var progress: Double { (elapsed - ballStart) / Self.flight }
+    /// A bola chega mais rápido a cada saque.
+    var flightTime: Double { max(0.95, 1.4 - Double(ballIndex) * 0.06) }
+    var progress: Double { (elapsed - ballStart) / flightTime }
 
     override func didStart() {
         setHUD("🏐 1/\(Self.total) · 0 pts")
@@ -49,12 +51,15 @@ final class VolleyEngine: MiniEngine {
         } else {
             ballStart = elapsed + 1.0
             resolved = false
+            // o anel muda de lugar a cada bola
+            contactRel = CGPoint(x: Double.random(in: 0.42...0.8),
+                                 y: Double.random(in: 0.3...0.52))
         }
         setHUD("🏐 \(min(ballIndex + 1, Self.total))/\(Self.total) · \(score) pts")
     }
 
     func contactPoint(size: CGSize) -> CGPoint {
-        CGPoint(x: size.width * 0.68, y: size.height * 0.4)
+        CGPoint(x: size.width * contactRel.x, y: size.height * contactRel.y)
     }
 }
 

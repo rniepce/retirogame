@@ -14,13 +14,23 @@ final class SoapboxEngine: MiniEngine {
     let avatar: AvatarConfig
     init(avatar: AvatarConfig) { self.avatar = avatar }
 
+    struct Coin {
+        let laneX: Double
+        var z: Double
+        var taken = false
+    }
+
     private(set) var obstacles: [Obstacle] = []
+    private(set) var coins: [Coin] = []
+    private(set) var coinCount = 0
+    private var coinsSpawned = 0
     private(set) var lives = 3
     private(set) var passed = 0
     private(set) var playerX = 0.5        // 0..1
     private var targetX = 0.5
     private var tiltX = 0.0
     private var nextSpawn = 1.0
+    private var nextCoin = 0.8
     private var invulnUntil = -1.0
     private let motion = CMMotionManager()
 
@@ -76,12 +86,29 @@ final class SoapboxEngine: MiniEngine {
         }
         obstacles.removeAll { $0.z <= -0.05 }
 
+        // moedas: mesma pista, coleta ativa
+        for i in coins.indices {
+            coins[i].z -= zSpeed * dt
+            if !coins[i].taken, coins[i].z <= 0.14, coins[i].z > 0,
+               abs(coins[i].laneX - playerX) < 0.09 {
+                coins[i].taken = true
+                coinCount += 1
+                Haptics.light()
+            }
+        }
+        coins.removeAll { $0.z <= -0.05 }
+
         if elapsed >= nextSpawn {
             nextSpawn = elapsed + max(0.65, 1.3 - elapsed * 0.015)
             obstacles.append(Obstacle(emoji: ["🚧", "🪨", "🐕", "🛒"].randomElement()!,
                                       laneX: Double.random(in: 0.12...0.88), z: 1))
         }
-        setHUD("🛞 \(String(repeating: "❤️", count: max(lives, 0))) · \(Int(remaining))s")
+        if elapsed >= nextCoin {
+            nextCoin = elapsed + Double.random(in: 0.9...1.4)
+            coins.append(Coin(laneX: Double.random(in: 0.15...0.85), z: 1))
+            coinsSpawned += 1
+        }
+        setHUD("🛞 \(String(repeating: "❤️", count: max(lives, 0))) · 🪙\(coinCount) · \(Int(remaining))s")
     }
 
     override func dragChanged(start: CGPoint, current: CGPoint) {
@@ -90,18 +117,22 @@ final class SoapboxEngine: MiniEngine {
     }
 
     private func finishRun(survived: Bool) {
-        let points = passed * 2 + lives * 8
-        finish(points: points, maxPoints: (passed + obstacles.count) * 2 + 24,
+        let points = passed * 2 + coinCount * 3 + lives * 8
+        finish(points: points,
+               maxPoints: (passed + obstacles.count) * 2 + coinsSpawned * 3 + 24,
                phrases: survived ? MiniEngine.defaultPhrases :
                 ["A ladeira venceu dessa vez!", "Bom começo!", "Mandou muito bem!", "Perfeito!"])
     }
 
-    /// Projeção pseudo-3D de um obstáculo.
-    func project(_ o: Obstacle, size: CGSize) -> (CGPoint, Double) {
-        let spread = 1 - o.z * 0.85
-        let x = size.width / 2 + (o.laneX - 0.5) * size.width * spread
-        let y = size.height * 0.30 + pow(1 - o.z, 1.7) * size.height * 0.52
+    /// Projeção pseudo-3D de um ponto da pista.
+    func project(laneX: Double, z: Double, size: CGSize) -> (CGPoint, Double) {
+        let spread = 1 - z * 0.85
+        let x = size.width / 2 + (laneX - 0.5) * size.width * spread
+        let y = size.height * 0.30 + pow(1 - z, 1.7) * size.height * 0.52
         return (CGPoint(x: x, y: y), spread)
+    }
+    func project(_ o: Obstacle, size: CGSize) -> (CGPoint, Double) {
+        project(laneX: o.laneX, z: o.z, size: size)
     }
 }
 
@@ -137,6 +168,12 @@ enum SoapboxPainter {
             ctx.fill(Path(roundedRect: CGRect(x: w / 2 - dashW / 2, y: y, width: dashW, height: 8 + f * 18),
                           cornerRadius: 4),
                      with: .color(Color(hex: 0xC9B091)))
+        }
+
+        // moedas
+        for coin in e.coins where !coin.taken && coin.z > 0 {
+            let (p, s) = e.project(laneX: coin.laneX, z: coin.z, size: size)
+            Px.draw(&ctx, Px.coin, at: p, pixel: (14 + s * 22) / 8)
         }
 
         // obstáculos (de trás para frente, sprites pixel)

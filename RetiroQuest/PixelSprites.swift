@@ -127,6 +127,22 @@ enum Px {
     static let windChevrons = [
         "W..W..", ".W..W.", "..W..W", ".W..W.", "W..W..",
     ]
+    static let bee = [
+        "..K..K..", "...KK...", ".KYKYKW.", "KYKYKYWW",
+        ".KYKYKW.", "...KK...",
+    ]
+    static let coin = [
+        "..KKKK..", ".KYYYYK.", "KYWYYYYK", "KYWYYYYK",
+        "KYYYYYYK", "KYYYYYYK", ".KYYYYK.", "..KKKK..",
+    ]
+    static let bird = [
+        "KK...KK.", "..K.K...", ".KWBWK..", "KBBBBBK.",
+        ".KKKKK..",
+    ]
+    static let heart = [
+        ".KK.KK..", "KRRKRRK.", "KRRRRRK.", ".KRRRK..",
+        "..KRK...", "...K....",
+    ]
 
     // MARK: - Símbolos de alvo (lasershot)
 

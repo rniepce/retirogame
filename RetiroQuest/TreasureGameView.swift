@@ -13,6 +13,7 @@ final class TreasureEngine: MiniEngine {
     private(set) var digs: [Dig] = []
     private(set) var digsLeft = 7
     private(set) var found = false
+    private(set) var hint: (from: CGPoint, angle: Double, until: Double)?
     private var done = false
 
     override func didStart() {
@@ -63,6 +64,12 @@ final class TreasureEngine: MiniEngine {
             Haptics.light()
         }
         digs.append(Dig(point: rel, heat: heat))
+        if !found {
+            // a pá "aponta" na direção do tesouro — com bastante ruído
+            let angle = Double(atan2((treasure.y - rel.y) * 1060, (treasure.x - rel.x) * 800))
+                + Double.random(in: -0.5...0.5)
+            hint = (from: rel, angle: angle, until: elapsed + 1.7)
+        }
         setHUD("⛏️ \(digsLeft) pás")
 
         if found {
@@ -160,6 +167,24 @@ enum TreasurePainter {
                 xMark.move(to: CGPoint(x: p.x + 6, y: p.y - 6)); xMark.addLine(to: CGPoint(x: p.x - 6, y: p.y + 6))
                 ctx.stroke(xMark, with: .color(color), style: StrokeStyle(lineWidth: 4, lineCap: .round))
             }
+        }
+
+        // seta-bússola apontando (com ruído) para o tesouro
+        if let hint = e.hint, e.elapsed < hint.until {
+            let p = CGPoint(x: rect.minX + hint.from.x * rect.width,
+                            y: rect.minY + hint.from.y * rect.height)
+            let tip = CGPoint(x: p.x + cos(hint.angle) * 36, y: p.y + sin(hint.angle) * 36)
+            ctx.stroke(Path { path in
+                path.move(to: p); path.addLine(to: tip)
+            }, with: .color(Theme.terra), style: StrokeStyle(lineWidth: 4, lineCap: .round))
+            let side1 = CGPoint(x: tip.x - cos(hint.angle - 0.5) * 12,
+                                y: tip.y - sin(hint.angle - 0.5) * 12)
+            let side2 = CGPoint(x: tip.x - cos(hint.angle + 0.5) * 12,
+                                y: tip.y - sin(hint.angle + 0.5) * 12)
+            ctx.fill(Path { path in
+                path.move(to: tip); path.addLine(to: side1); path.addLine(to: side2)
+                path.closeSubpath()
+            }, with: .color(Theme.terra))
         }
 
         // legenda com quadradinhos de cor

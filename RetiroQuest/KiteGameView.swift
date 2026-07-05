@@ -13,6 +13,10 @@ final class KiteEngine: MiniEngine {
     private(set) var starPos: CGPoint?
     private(set) var starsCollected = 0
     private(set) var crashed = false
+    private(set) var bird: (pos: CGPoint, dir: Double)?
+    private var nextBird = 6.0
+    private var lastBirdHit = -10.0
+    private var penalty = 0
     private var finger: CGPoint?
     private var gustAt = 5.0
     private var gustUntil = -1.0
@@ -37,8 +41,34 @@ final class KiteEngine: MiniEngine {
         }
         let remaining = Self.duration - elapsed
         if remaining <= 0 {
-            finish(points: starsCollected * 10 + 20, maxPoints: Self.maxStars * 10 + 20)
+            finish(points: max(0, starsCollected * 10 + 20 - penalty),
+                   maxPoints: Self.maxStars * 10 + 20)
             return
+        }
+
+        // passarinho atravessa o céu — desvie ou leva um empurrão
+        if bird == nil, elapsed > nextBird {
+            let fromLeft = Bool.random()
+            bird = (CGPoint(x: fromLeft ? -30 : viewSize.width + 30,
+                            y: Double.random(in: 100...viewSize.height * 0.5)),
+                    fromLeft ? 1.0 : -1.0)
+            say("🐦 PASSARINHO!", for: 0.8)
+        }
+        if var flyer = bird {
+            flyer.pos.x += flyer.dir * 150 * dt
+            bird = flyer
+            if flyer.pos.x < -60 || flyer.pos.x > viewSize.width + 60 {
+                bird = nil
+                nextBird = elapsed + Double.random(in: 5...9)
+            } else if hypot(flyer.pos.x - kite.x, flyer.pos.y - kite.y) < 42,
+                      elapsed - lastBirdHit > 1 {
+                lastBirdHit = elapsed
+                penalty += 5
+                velocity.dx += flyer.dir * 260
+                velocity.dy += 120
+                say("💥 XÔ! -5")
+                Haptics.error()
+            }
         }
 
         // vento base + rajadas
@@ -72,7 +102,8 @@ final class KiteEngine: MiniEngine {
         // chão: caiu
         if kite.y > viewSize.height * 0.72 {
             crashed = true
-            finish(points: starsCollected * 10, maxPoints: Self.maxStars * 10 + 20,
+            finish(points: max(0, starsCollected * 10 - penalty),
+                   maxPoints: Self.maxStars * 10 + 20,
                    phrases: ["A pipa caiu no mato!", "Bom começo!", "Mandou muito bem!", "Dono do céu!"])
             Haptics.error()
             return
@@ -142,6 +173,13 @@ enum KitePainter {
         if let s = e.starPos {
             let pulse = 1 + sin(e.elapsed * 5) * 0.15
             Px.draw(&ctx, Px.star, at: s, pixel: 4.5 * pulse)
+        }
+
+        // passarinho intruso
+        if let flyer = e.bird {
+            let flap = sin(e.elapsed * 12) * 2
+            Px.draw(&ctx, Px.bird, at: CGPoint(x: flyer.pos.x, y: flyer.pos.y + flap),
+                    pixel: 4, flipX: flyer.dir < 0)
         }
 
         // linha do mirante até a pipa (com barriga)

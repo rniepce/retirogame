@@ -21,6 +21,8 @@ final class HarvestEngine: MiniEngine {
     private(set) var picked = 0
     private(set) var ripened = 0
     private(set) var score = 0
+    private(set) var beeSpot = 0
+    private var beeMoveAt = 3.0
 
     override func didStart() {
         setHUD("🍊 45s · 0")
@@ -36,6 +38,11 @@ final class HarvestEngine: MiniEngine {
         if remaining <= 0 {
             finish(points: score, maxPoints: max(ripened * 10, 10))
             return
+        }
+        // a abelha muda de fruta de tempos em tempos
+        if elapsed > beeMoveAt {
+            beeSpot = Int.random(in: 0..<fruits.count)
+            beeMoveAt = elapsed + Double.random(in: 2.5...4.0)
         }
         for i in fruits.indices {
             let age = elapsed - fruits[i].since
@@ -73,6 +80,13 @@ final class HarvestEngine: MiniEngine {
         for i in fruits.indices {
             let c = fruitCenter(i, size: viewSize)
             guard hypot(p.x - c.x, p.y - c.y) < 34 else { continue }
+            // colher a fruta onde a abelha está dá ferroada!
+            if i == beeSpot, fruits[i].state != .empty {
+                score = max(0, score - 5)
+                say("🐝 FERROADA! -5")
+                Haptics.error()
+                return
+            }
             switch fruits[i].state {
             case .ripe:
                 score += 10
@@ -135,6 +149,12 @@ enum HarvestPainter {
                          with: .color(Color(hex: 0x6E5637)))
             }
         }
+
+        // abelha guardiã
+        let beeC = e.fruitCenter(e.beeSpot, size: size)
+        Px.draw(&ctx, Px.bee,
+                at: CGPoint(x: beeC.x + 12, y: beeC.y - 14 + sin(e.elapsed * 8) * 3),
+                pixel: 3, flipX: sin(e.elapsed * 2) < 0)
 
         // cesta
         Px.draw(&ctx, Px.basket, at: CGPoint(x: w * 0.82, y: h * 0.8), pixel: 5.4)

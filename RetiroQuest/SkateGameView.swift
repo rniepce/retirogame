@@ -27,7 +27,7 @@ final class SkateEngine: MiniEngine {
     override func tick(dt: Double) {
         let remaining = Self.duration - elapsed
         if remaining <= 0 {
-            finish(points: score, maxPoints: 120)
+            finish(points: score, maxPoints: 150)
             return
         }
         if airborne {
@@ -56,20 +56,31 @@ final class SkateEngine: MiniEngine {
     override func tap(at p: CGPoint) {
         guard !finished else { return }
         if airborne {
-            let left = airTime - (elapsed - airStart)
-            if left < 0.12 {
-                amp = 0.5
-                say("Quase caiu! Equilibrou…")
-                Haptics.error()
-            } else if tricksInAir < 3 {
-                tricksInAir += 1
-                score += 4
-                say(["🛹 Ollie! +4", "🔥 Kickflip! +4", "⚡ 360! +4"][tricksInAir - 1], for: 0.7)
-                Haptics.light()
-            }
+            performTrick(points: 4, names: ["🛹 Ollie! +4", "🔥 Kickflip! +4", "⚡ 360! +4"])
         } else if abs(s) < 0.35 {
             amp = min(amp + 0.17, 1.05)
             say("Embalou!", for: 0.5)
+            Haptics.light()
+        }
+    }
+
+    /// Swipe no ar = manobra de agarrar, vale mais que o toque.
+    override func dragEnded(start: CGPoint, current: CGPoint) {
+        guard !finished, airborne,
+              hypot(current.x - start.x, current.y - start.y) > 34 else { return }
+        performTrick(points: 7, names: ["🤙 GRAB! +7", "🌀 TAILWHIP! +7", "🦸 SUPERMAN! +7"])
+    }
+
+    private func performTrick(points gain: Int, names: [String]) {
+        let left = airTime - (elapsed - airStart)
+        if left < 0.12 {
+            amp = 0.5
+            say("Quase caiu! Equilibrou…")
+            Haptics.error()
+        } else if tricksInAir < 3 {
+            tricksInAir += 1
+            score += gain
+            say(names[tricksInAir - 1], for: 0.7)
             Haptics.light()
         }
     }

@@ -6,6 +6,7 @@ final class LaserEngine: MiniEngine {
     struct Target {
         let spot: Int
         let isRed: Bool
+        let isGold: Bool
         let born: Double
         let life: Double
     }
@@ -13,7 +14,8 @@ final class LaserEngine: MiniEngine {
 
     private(set) var targets: [Target] = []
     private(set) var score = 0
-    private(set) var greensSpawned = 0
+    private(set) var streak = 0
+    private var maxPossible = 0
     private var nextSpawn = 1.2
 
     override func didStart() {
@@ -30,10 +32,14 @@ final class LaserEngine: MiniEngine {
     override func tick(dt: Double) {
         let remaining = Self.duration - elapsed
         if remaining <= 0 {
-            finish(points: score, maxPoints: max(greensSpawned * 10, 10))
+            finish(points: score, maxPoints: max(maxPossible, 10))
             return
         }
+        // alvo verde que apagou sozinho quebra o combo
+        let expired = targets.filter { elapsed - $0.born > $0.life }
+        if expired.contains(where: { !$0.isRed }) { streak = 0 }
         targets.removeAll { elapsed - $0.born > $0.life }
+
         if elapsed >= nextSpawn {
             let difficulty = elapsed / Self.duration
             nextSpawn = elapsed + (1.1 - 0.62 * difficulty)
@@ -41,12 +47,14 @@ final class LaserEngine: MiniEngine {
             let free = (0..<12).filter { !occupied.contains($0) }
             if let spot = free.randomElement() {
                 let isRed = Double.random(in: 0...1) < 0.25
-                if !isRed { greensSpawned += 1 }
-                targets.append(Target(spot: spot, isRed: isRed, born: elapsed,
-                                      life: 1.6 - 0.85 * difficulty))
+                let isGold = !isRed && Double.random(in: 0...1) < 0.09
+                if !isRed { maxPossible += isGold ? 25 : 10 }
+                targets.append(Target(spot: spot, isRed: isRed, isGold: isGold, born: elapsed,
+                                      life: (1.6 - 0.85 * difficulty) * (isGold ? 0.55 : 1)))
             }
         }
-        setHUD("👾 \(Int(remaining))s · \(score) pts")
+        let comboTxt = streak >= 3 ? " x\(streak)" : ""
+        setHUD("👾 \(Int(remaining))s · \(score)\(comboTxt)")
     }
 
     override func tap(at p: CGPoint) {
@@ -58,11 +66,19 @@ final class LaserEngine: MiniEngine {
                 targets.remove(at: i)
                 if t.isRed {
                     score = max(0, score - 10)
+                    streak = 0
                     say("🔴 Alvo proibido! -10")
                     Haptics.error()
+                } else if t.isGold {
+                    streak += 1
+                    score += 25
+                    say("⭐ DOURADO! +25")
+                    Haptics.success()
                 } else {
-                    score += 10
-                    say("+10")
+                    streak += 1
+                    let bonus = min(streak - 1, 5) * 2
+                    score += 10 + bonus
+                    say(streak >= 3 ? "+\(10 + bonus) COMBO x\(streak)!" : "+\(10 + bonus)")
                     Haptics.light()
                 }
                 return
@@ -108,15 +124,20 @@ enum LaserPainter {
         for t in e.targets {
             let c = e.spotCenter(t.spot, size: size)
             let progress = min(1, (e.elapsed - t.born) / t.life)
-            let color = t.isRed ? Color(hex: 0xE8503A) : Color(hex: 0x5BE86E)
+            let color = t.isRed ? Color(hex: 0xE8503A) : (t.isGold ? Theme.ouro : Color(hex: 0x5BE86E))
             ctx.fill(Path(ellipseIn: CGRect(x: c.x - radius, y: c.y - radius,
                                             width: radius * 2, height: radius * 2)),
                      with: .color(color.opacity(0.25)))
             ctx.fill(Path(ellipseIn: CGRect(x: c.x - radius * 0.62, y: c.y - radius * 0.62,
                                             width: radius * 1.24, height: radius * 1.24)),
                      with: .color(color))
-            Px.draw(&ctx, t.isRed ? Px.cross : Px.plus, at: c, pixel: radius * 0.1,
-                    colors: Px.tinted(["W": Theme.tinta]))
+            if t.isGold {
+                Px.draw(&ctx, Px.star, at: c, pixel: radius * 0.1,
+                        colors: Px.tinted(["Y": Theme.tinta]))
+            } else {
+                Px.draw(&ctx, t.isRed ? Px.cross : Px.plus, at: c, pixel: radius * 0.1,
+                        colors: Px.tinted(["W": Theme.tinta]))
+            }
             // anel do tempo restante
             var ring = Path()
             ring.addArc(center: c, radius: radius * 0.95,

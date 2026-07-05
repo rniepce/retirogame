@@ -44,8 +44,13 @@ final class ArcherEngine: NSObject, ObservableObject {
 
     // MARK: geometria (no espaço da view)
 
+    private var driftPhase = 0.0
+    /// Nas duas últimas flechas o alvo desliza de um lado para o outro.
+    var targetDrift: CGFloat {
+        arrows <= 2 && !finished ? sin(driftPhase) * targetRadius * 0.55 : 0
+    }
     var targetCenter: CGPoint {
-        CGPoint(x: viewSize.width / 2, y: viewSize.height * 0.34)
+        CGPoint(x: viewSize.width / 2 + targetDrift, y: viewSize.height * 0.34)
     }
     var targetRadius: CGFloat {
         min(viewSize.width, viewSize.height) * 0.16
@@ -81,6 +86,8 @@ final class ArcherEngine: NSObject, ObservableObject {
         let now = CACurrentMediaTime()
         let dt = min(now - lastTime, 0.05)
         lastTime = now
+
+        if arrows <= 2 && !finished { driftPhase += dt * 1.7 }
 
         if var f = flight {
             f.t += dt / Self.flightDuration
@@ -119,7 +126,7 @@ final class ArcherEngine: NSObject, ObservableObject {
         arrows -= 1
 
         let r = targetRadius
-        let jitter = (1.05 - aim.power) * r * 0.30
+        let jitter = (1.05 - aim.power) * r * 0.26
         let hit = CGPoint(
             x: aim.point.x + wind * r * 0.18 + .random(in: -jitter...jitter),
             y: aim.point.y - r * 0.12 + .random(in: -(jitter * 0.8)...(jitter * 0.8))
@@ -151,6 +158,9 @@ final class ArcherEngine: NSObject, ObservableObject {
             notice = Notice(text: "Errou o alvo…", until: now + 0.9)
         }
         wind = .random(in: -2.4...2.4)
+        if arrows == 2 {
+            notice = Notice(text: "🎯 O ALVO VAI SE MOVER!", until: now + 1.5)
+        }
         if arrows <= 0 { endAt = now + 1.1 }
     }
 

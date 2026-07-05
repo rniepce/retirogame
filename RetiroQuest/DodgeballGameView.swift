@@ -18,6 +18,8 @@ final class DodgeballEngine: MiniEngine {
     private(set) var lives = 3
     private(set) var nearMisses = 0
     private(set) var playerX = 0.5
+    private(set) var heart: (x: Double, t: Double)?   // coração desce; pegue para +1 vida
+    private var nextHeart = 12.0
     private var targetX = 0.5
     private var nextThrow = 1.4
     private var invulnUntil = -1.0
@@ -61,6 +63,25 @@ final class DodgeballEngine: MiniEngine {
             }
         }
         balls.removeAll { $0.t > 1.15 }
+
+        // coração recuperador (só quando falta vida)
+        if heart == nil, elapsed > nextHeart, lives < 3 {
+            heart = (x: Double.random(in: 0.15...0.85), t: 0)
+            say("❤️ VIDA EXTRA CAINDO!", for: 1)
+        }
+        if var hh = heart {
+            hh.t += dt / 3.2
+            heart = hh
+            if hh.t >= 0.97 {
+                if abs(hh.x - playerX) < 0.1 {
+                    lives = min(3, lives + 1)
+                    say("+1 ❤️")
+                    Haptics.success()
+                }
+                heart = nil
+                nextHeart = elapsed + 12
+            }
+        }
 
         if elapsed >= nextThrow {
             let interval = max(0.75, 1.5 - elapsed * 0.016)
@@ -110,6 +131,12 @@ enum DodgeballPainter {
                    with: .color([Color(hex: 0x2E4057), Color(hex: 0x8E5BA6), Color(hex: 0x3FA9C9)][i]))
             c.fill(Path(ellipseIn: CGRect(x: -9, y: -26, width: 18, height: 18)),
                    with: .color(Color(hex: 0xE3B181)))
+        }
+
+        // coração descendo
+        if let hh = e.heart {
+            let y = h * 0.15 + (h * 0.78 - h * 0.15) * hh.t
+            Px.draw(&ctx, Px.heart, at: CGPoint(x: w * hh.x, y: y), pixel: 4)
         }
 
         // bolas em voo

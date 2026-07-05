@@ -16,10 +16,20 @@ final class BMXEngine: MiniEngine {
     private(set) var angle = 0.0         // rotação acumulada no ar
     private(set) var flips = 0
     private(set) var crashes = 0
+    private(set) var perfects = 0
     private var stunnedUntil = -1.0
     private var reachedEnd = false
 
     static let ramps = [500.0, 1050.0, 1600.0]
+
+    /// Estrelas colecionáveis: no chão e no arco dos saltos.
+    struct TrackStar {
+        let x: Double
+        let y: Double        // altura absoluta
+        var taken = false
+    }
+    private(set) var trackStars: [TrackStar] = []
+    private(set) var starsTaken = 0
 
     func elevation(_ wx: Double) -> Double {
         var e = 12 * sin(wx / 80) + 7 * sin(wx / 37)
@@ -33,6 +43,11 @@ final class BMXEngine: MiniEngine {
         setHUD("🚴 0%")
         say("Segure para acelerar!", for: 2)
         altitude = elevation(x)
+        trackStars = [300.0, 800, 1400, 1900, 2050].map {
+            TrackStar(x: $0, y: elevation($0) + 34)
+        } + [740.0, 1290, 1840].map {
+            TrackStar(x: $0, y: 100)   // no ar, depois das rampas
+        }
     }
 
     override func tick(dt: Double) {
@@ -62,7 +77,12 @@ final class BMXEngine: MiniEngine {
                 if offset < 0.8 {
                     if fullFlips > 0 {
                         flips += fullFlips
-                        say(fullFlips > 1 ? "🔥 DUPLO BACKFLIP!" : "🔥 BACKFLIP!", for: 1.1)
+                        if offset < 0.3 {
+                            perfects += 1
+                            say(fullFlips > 1 ? "🔥 DUPLO PERFEITO! +5" : "🔥 BACKFLIP PERFEITO! +5", for: 1.1)
+                        } else {
+                            say(fullFlips > 1 ? "🔥 DUPLO BACKFLIP!" : "🔥 BACKFLIP!", for: 1.1)
+                        }
                         Haptics.success()
                     }
                 } else {
@@ -84,18 +104,28 @@ final class BMXEngine: MiniEngine {
             }
         }
 
+        // coleta de estrelas
+        for i in trackStars.indices where !trackStars[i].taken {
+            if abs(trackStars[i].x - x) < 28 && abs(trackStars[i].y - (altitude + 16)) < 36 {
+                trackStars[i].taken = true
+                starsTaken += 1
+                say("⭐ +5", for: 0.5)
+                Haptics.light()
+            }
+        }
+
         if x >= Self.trackLength {
             reachedEnd = true
-            let timeBonus = max(0, 30 - Int(elapsed))
-            let points = flips * 20 + timeBonus + (crashes == 0 ? 20 : 0)
+            let timeBonus = max(0, 25 - Int(elapsed))
+            let points = flips * 20 + starsTaken * 5 + perfects * 5 + timeBonus + (crashes == 0 ? 20 : 0)
             let final = points
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { [weak self] in
-                self?.finish(points: final, maxPoints: 100)
+                self?.finish(points: final, maxPoints: 130)
             }
             say("🏁 Chegou!", for: 1.5)
             Haptics.success()
         }
-        setHUD("🚴 \(Int(x / Self.trackLength * 100))% · \(flips) flips")
+        setHUD("🚴 \(Int(x / Self.trackLength * 100))% · ⭐\(starsTaken) · \(flips) flips")
     }
 }
 
@@ -129,6 +159,14 @@ enum BMXPainter {
         fill.closeSubpath()
         ctx.fill(fill, with: .color(Color(hex: 0x7FA85E)))
         ctx.stroke(ground, with: .color(Color(hex: 0xA8814F)), lineWidth: 7)
+
+        // estrelas colecionáveis
+        for s in e.trackStars where !s.taken {
+            let sx = s.x - camX
+            if sx > -20 && sx < w + 20 {
+                Px.draw(&ctx, Px.star, at: CGPoint(x: sx, y: baseY - s.y), pixel: 3.5)
+            }
+        }
 
         // linha de chegada
         let finishSX = BMXEngine.trackLength - camX

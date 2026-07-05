@@ -15,12 +15,15 @@ struct MemoryGameView: View {
 
     @State private var cards: [Card] = {
         let symbols = ["🕊️", "✝️", "🌹", "👼", "🔔", "🐟", "☀️", "🍇"]
-        return (symbols + symbols).shuffled().enumerated().map { Card(id: $0.offset, symbol: $0.element) }
+        return (symbols + symbols).shuffled().enumerated().map {
+            Card(id: $0.offset, symbol: $0.element, up: true)   // espiada inicial
+        }
     }()
     @State private var faceUp: [Int] = []
     @State private var moves = 0
     @State private var locked = false
     @State private var won = false
+    @State private var peeking = true
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 4)
 
@@ -41,7 +44,7 @@ struct MemoryGameView: View {
                 .allowsHitTesting(false)
 
             VStack(spacing: 14) {
-                Text("MEMÓRIA DOS VITRAIS")
+                Text(peeking ? "MEMORIZE OS VITRAIS!" : "MEMÓRIA DOS VITRAIS")
                     .font(Theme.px(10))
                     .foregroundStyle(Theme.ouro)
                     .padding(.top, 60)
@@ -64,10 +67,18 @@ struct MemoryGameView: View {
             }
             .padding(.horizontal, 16)
         }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.4) {
+                withAnimation(.spring(duration: 0.4)) {
+                    for i in cards.indices { cards[i].up = false }
+                }
+                peeking = false
+            }
+        }
     }
 
     private func flip(_ card: Card) {
-        guard !locked, !card.up, !card.matched, !won,
+        guard !peeking, !locked, !card.up, !card.matched, !won,
               let idx = cards.firstIndex(where: { $0.id == card.id }) else { return }
         withAnimation(.spring(duration: 0.35)) { cards[idx].up = true }
         faceUp.append(idx)
