@@ -45,6 +45,7 @@ Se mudar a estrutura de arquivos, regenere o projeto com
 | Rampa de Skate 🛹 | Skate | embale no ritmo e faça manobras no ar |
 | Pracinha 🛝 | Caça ao Tesouro | quente-e-frio num mapa antigo do condomínio |
 | Quadra Descoberta 🥎 | Queimada | corra e desvie das bolas — 3 vidas |
+| Piscina 🏊 | Natação | toque alternando os lados; virada perfeita na parede dá impulso |
 
 Infra comum em `GameKitCommon.swift`: `MiniEngine` (relógio CADisplayLink,
 HUD, avisos, pontuação→estrelas) + `MiniGameHost` (canvas, gestos, botão sair).

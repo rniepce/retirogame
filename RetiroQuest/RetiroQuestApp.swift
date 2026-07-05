@@ -95,6 +95,8 @@ struct RootView: View {
             TreasureGameView(onExit: exit, onFinish: done)
         case .dodgeball:
             DodgeballGameView(avatar: progress.avatar, onExit: exit, onFinish: done)
+        case .swim:
+            SwimGameView(avatar: progress.avatar, onExit: exit, onFinish: done)
         case nil:
             MapView() // local sem minigame não chega aqui pela interface
         }

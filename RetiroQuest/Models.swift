@@ -66,6 +66,7 @@ enum MinigameID: String, Codable, CaseIterable {
     case skate = "skate"
     case treasure = "tesouro"
     case dodgeball = "queimada"
+    case swim = "natacao"
 }
 
 struct MinigameInfo {
@@ -107,6 +108,8 @@ enum MinigameCatalog {
                          description: "O tesouro está enterrado no condomínio. Cave e siga o quente-e-frio!"),
         .dodgeball: .init(id: .dodgeball, title: "Queimada", icon: "🥎",
                           description: "Arraste para correr e desvie das bolas até o apito final!"),
+        .swim: .init(id: .swim, title: "Natação", icon: "🏊",
+                     description: "Toque alternando os lados para nadar. Vire na parede na hora certa e vença a prova!"),
     ]
     static func info(_ id: MinigameID) -> MinigameInfo { all[id]! }
 }
@@ -180,6 +183,9 @@ enum World {
         POI(id: "queimada", name: "Quadra Descoberta", icon: "🥎",
             position: CGPoint(x: 538, y: 187), minigame: .dodgeball,
             blurb: "A molecada já escolheu os times."),
+        POI(id: "piscina", name: "Piscina", icon: "🏊",
+            position: CGPoint(x: 170, y: 470), minigame: .swim,
+            blurb: "A raia do meio é sua. Valendo!"),
     ]
 }
 
