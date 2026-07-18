@@ -146,6 +146,7 @@ struct MiniGameHost<E: MiniEngine>: View {
             Canvas { ctx, size in
                 engine.viewSize = size
                 draw(engine, &ctx, size)
+                GamePaint.vignette(&ctx, size: size)
                 GamePaint.notice(&ctx, engine: engine, size: size)
             }
         }

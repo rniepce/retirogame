@@ -157,6 +157,32 @@ enum KitePainter {
                       cornerRadius: 4),
                  with: .color(Color(hex: 0x8A6238)))
 
+        // bando de pássaros distantes
+        for i in 0..<3 {
+            let seed = Double(i) * 40
+            let bx = (e.elapsed * 22 + seed * 3).truncatingRemainder(dividingBy: Double(w) + 120) - 60
+            let by = h * 0.12 + seed * 0.0016 * h + sin(e.elapsed * 2 + seed) * 4
+            var vee = Path()
+            vee.move(to: CGPoint(x: bx - 5, y: by + 3))
+            vee.addLine(to: CGPoint(x: bx, y: by))
+            vee.addLine(to: CGPoint(x: bx + 5, y: by + 3))
+            ctx.stroke(vee, with: .color(Theme.tinta.opacity(0.45)),
+                       style: StrokeStyle(lineWidth: 2, lineCap: .round))
+        }
+        // folhas levadas pela rajada
+        if e.gustActive {
+            for i in 0..<7 {
+                let seed = Double(i) * 53
+                let lx = (e.elapsed * 260 * e.gustDirection + seed * 17)
+                    .truncatingRemainder(dividingBy: Double(w) + 40)
+                let fx = e.gustDirection > 0 ? lx - 20 : Double(w) + 20 - lx
+                let fy = h * 0.2 + seed.truncatingRemainder(dividingBy: h * 0.4)
+                    + sin(e.elapsed * 6 + seed) * 8
+                ctx.fill(Path(CGRect(x: fx, y: fy, width: 4, height: 3)),
+                         with: .color(Color(hex: 0x4E8F5C).opacity(0.7)))
+            }
+        }
+
         // aviso de rajada (setas pixel na direção do vento)
         if e.gustWarning || e.gustActive {
             let dir = e.gustDirection

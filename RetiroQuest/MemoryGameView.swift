@@ -36,12 +36,18 @@ struct MemoryGameView: View {
                 Color(hex: 0x241F30)
             }
             .ignoresSafeArea()
+            // rosácea da capela ao fundo
+            VitralArch()
+                .allowsHitTesting(false)
             Circle()
                 .fill(RadialGradient(colors: [Color(hex: 0xF2B23E).opacity(0.25), .clear],
                                      center: .center, startRadius: 10, endRadius: 170))
                 .frame(width: 320, height: 320)
                 .offset(y: -180)
                 .allowsHitTesting(false)
+            // velas tremulando nos cantos
+            CandleGlow().offset(x: -150, y: 330)
+            CandleGlow().offset(x: 150, y: 330)
 
             VStack(spacing: 14) {
                 Text(peeking ? "MEMORIZE OS VITRAIS!" : "MEMÓRIA DOS VITRAIS")
@@ -112,6 +118,50 @@ struct MemoryGameView: View {
                 }
                 locked = false
             }
+        }
+    }
+
+    /// Janela em arco com vitrais coloridos, atrás do tabuleiro.
+    private struct VitralArch: View {
+        var body: some View {
+            Canvas { ctx, size in
+                let cx = size.width / 2
+                let archW: CGFloat = 190, archTop: CGFloat = 26
+                var arch = Path()
+                arch.move(to: CGPoint(x: cx - archW / 2, y: archTop + 320))
+                arch.addLine(to: CGPoint(x: cx - archW / 2, y: archTop + 90))
+                arch.addQuadCurve(to: CGPoint(x: cx + archW / 2, y: archTop + 90),
+                                  control: CGPoint(x: cx, y: archTop - 40))
+                arch.addLine(to: CGPoint(x: cx + archW / 2, y: archTop + 320))
+                arch.closeSubpath()
+                ctx.stroke(arch, with: .color(Color(hex: 0xF2B23E).opacity(0.3)), lineWidth: 3)
+                // caixilhos com vitrais translúcidos
+                let panes: [Color] = [Color(hex: 0xC8552F), Color(hex: 0x3FA9C9),
+                                      Color(hex: 0xF2B23E), Color(hex: 0x8E5BA6)]
+                for (i, pane) in panes.enumerated() {
+                    let px = cx - archW / 2 + 12 + CGFloat(i) * (archW - 24) / 4
+                    ctx.fill(Path(roundedRect: CGRect(x: px, y: archTop + 100,
+                                                      width: (archW - 24) / 4 - 6, height: 200),
+                                  cornerRadius: 3),
+                             with: .color(pane.opacity(0.1)))
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
+
+    /// Brilho de vela tremulando.
+    private struct CandleGlow: View {
+        var body: some View {
+            TimelineView(.animation) { tl in
+                let t = tl.date.timeIntervalSinceReferenceDate
+                let flicker = 0.16 + 0.07 * sin(t * 7) + 0.04 * sin(t * 13)
+                Circle()
+                    .fill(RadialGradient(colors: [Color(hex: 0xF2B23E).opacity(flicker), .clear],
+                                         center: .center, startRadius: 2, endRadius: 60))
+                    .frame(width: 120, height: 120)
+            }
+            .allowsHitTesting(false)
         }
     }
 

@@ -120,6 +120,12 @@ enum SkatePainter {
         ctx.fill(Path(CGRect(x: 0, y: h * 0.58, width: w, height: h * 0.42)),
                  with: .color(Color(hex: 0x7FA85E)))
         Px.draw(&ctx, Px.sun, at: CGPoint(x: w * 0.5, y: h * 0.13), pixel: 5)
+        Px.draw(&ctx, Px.cloud, at: CGPoint(x: w * 0.16 + sin(e.elapsed * 0.2) * 8, y: h * 0.1), pixel: 3)
+        Px.draw(&ctx, Px.cloud, at: CGPoint(x: w * 0.85, y: h * 0.2), pixel: 3.5)
+        // ipês atrás da rampa
+        Px.draw(&ctx, Px.tree, at: CGPoint(x: w * 0.08, y: h * 0.32), pixel: 6,
+                colors: Px.tinted(["G": Theme.ouro, "E": Color(hex: 0xD9922E)]))
+        Px.draw(&ctx, Px.tree, at: CGPoint(x: w * 0.93, y: h * 0.34), pixel: 5)
 
         // half-pipe: semicírculo interno
         var pipe = Path()
@@ -132,6 +138,16 @@ enum SkatePainter {
         wall.addLine(to: CGPoint(x: center.x + radius + 22, y: center.y))
         wall.closeSubpath()
         ctx.fill(wall, with: .color(Color(hex: 0xB9BEC4)))
+        // grafites na parede da rampa
+        ctx.draw(Text("RQ").font(Theme.px(16)).foregroundColor(Theme.terra.opacity(0.55)),
+                 at: CGPoint(x: center.x - radius * 0.55, y: center.y + radius * 0.62), anchor: .center)
+        ctx.draw(Text("SKATE OU MORTE").font(Theme.px(7)).foregroundColor(Theme.piscina.opacity(0.5)),
+                 at: CGPoint(x: center.x + radius * 0.45, y: center.y + radius * 0.75), anchor: .center)
+        for (gx, gy, gc) in [(0.2, 0.85, Theme.ouro), (-0.25, 0.92, Color(hex: 0x8E5BA6))] {
+            ctx.fill(Path(roundedRect: CGRect(x: center.x + radius * gx, y: center.y + radius * gy,
+                                              width: 18, height: 6), cornerRadius: 3),
+                     with: .color(gc.opacity(0.5)))
+        }
         ctx.stroke(pipe, with: .color(Color(hex: 0x8E959D)), lineWidth: 6)
         // bordas (coping)
         for sideX in [center.x - radius, center.x + radius] {

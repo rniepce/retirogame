@@ -138,6 +138,13 @@ enum BMXPainter {
         // céu em faixas + serra em parallax
         GamePaint.bands(&ctx, rect: CGRect(origin: .zero, size: size),
                         colors: [Color(hex: 0x8FC4DB), Color(hex: 0xB0D8DC), Color(hex: 0xD7EBDF)])
+        // sol e nuvens em parallax lento
+        Px.draw(&ctx, Px.sun, at: CGPoint(x: w * 0.82, y: h * 0.12), pixel: 5)
+        for (i, cy) in [0.16, 0.26].enumerated() {
+            let cloudX = w - ((camX * 0.12 + Double(i) * 260).truncatingRemainder(dividingBy: Double(w) + 160)) + 80
+            Px.draw(&ctx, Px.cloud, at: CGPoint(x: cloudX, y: h * cy), pixel: 3.5 + Double(i))
+        }
+
         var hills = Path()
         hills.move(to: CGPoint(x: 0, y: h * 0.55))
         for sx in stride(from: 0.0, through: Double(w), by: 24) {
@@ -178,9 +185,18 @@ enum BMXPainter {
             GamePaint.emoji(&ctx, "🏁", at: CGPoint(x: finishSX + 12, y: gy - 74), size: 30)
         }
 
-        // piloto
+        // poeira da roda traseira quando acelera no chão
         let px = w * 0.3
         let py = baseY - e.altitude
+        if !e.airborne && e.speed > 150 {
+            for i in 0..<5 {
+                let seed = Double(i) * 43 + e.elapsed * 30
+                let dx = seed.truncatingRemainder(dividingBy: 26)
+                let dy = (seed * 1.7).truncatingRemainder(dividingBy: 10)
+                ctx.fill(Path(CGRect(x: px - 22 - dx, y: py - 4 - dy, width: 3, height: 3)),
+                         with: .color(Color(hex: 0xA8814F).opacity(0.6 - Double(i) * 0.1)))
+            }
+        }
         let slope = e.airborne ? 0 : atan2(e.elevation(e.x + 14) - e.elevation(e.x - 14), 28)
         var c = ctx
         c.translateBy(x: px, y: py - 16)

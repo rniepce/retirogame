@@ -159,6 +159,19 @@ enum SoapboxPainter {
         road.addLine(to: CGPoint(x: -w * 0.02, y: h))
         road.closeSubpath()
         ctx.fill(road, with: .color(Theme.areia))
+        // árvores à beira da estrada (crescem conforme "passam")
+        let treeScroll = (e.elapsed * 1.1).truncatingRemainder(dividingBy: 1)
+        for i in 0..<5 {
+            let f = (Double(i) + treeScroll) / 5
+            let ty = h * 0.30 + pow(f, 1.7) * h * 0.7
+            let spread = 0.5 + f * 0.62
+            for side in [-1.0, 1.0] {
+                Px.draw(&ctx, Px.tree,
+                        at: CGPoint(x: w / 2 + side * w * spread * 0.52, y: ty),
+                        pixel: 1 + f * 4)
+            }
+        }
+
         // faixas centrais rolando
         let scroll = (e.elapsed * 2).truncatingRemainder(dividingBy: 1)
         for i in 0..<6 {

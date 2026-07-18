@@ -103,11 +103,23 @@ enum TreasurePainter {
                                        startPoint: .zero, endPoint: CGPoint(x: 0, y: size.height)))
 
         let rect = e.mapRect(size: size)
-        // pergaminho
+        // pergaminho envelhecido
         ctx.fill(Path(roundedRect: rect.insetBy(dx: -12, dy: -12), cornerRadius: 10),
                  with: .color(Color(hex: 0xE8D9B5)))
         ctx.stroke(Path(roundedRect: rect.insetBy(dx: -12, dy: -12), cornerRadius: 10),
                    with: .color(Color(hex: 0xB59A66)), lineWidth: 3)
+        // cantos chamuscados e mancha de café
+        for (corner, cr) in [(CGPoint(x: rect.minX - 8, y: rect.minY - 8), 22.0),
+                             (CGPoint(x: rect.maxX + 8, y: rect.maxY + 8), 28.0),
+                             (CGPoint(x: rect.maxX + 8, y: rect.minY - 8), 16.0)] {
+            ctx.fill(Path(ellipseIn: CGRect(x: corner.x - cr, y: corner.y - cr,
+                                            width: cr * 2, height: cr * 2)),
+                     with: .color(Color(hex: 0x6B4A2B).opacity(0.35)))
+        }
+        ctx.stroke(Path(ellipseIn: CGRect(x: rect.minX + rect.width * 0.6,
+                                          y: rect.minY + rect.height * 0.72,
+                                          width: 46, height: 40)),
+                   with: .color(Color(hex: 0x8A6238).opacity(0.25)), lineWidth: 5)
 
         // mapa simplificado do condomínio
         func mp(_ x: Double, _ y: Double) -> CGPoint {   // coords originais 800×1060
@@ -143,6 +155,13 @@ enum TreasurePainter {
         Px.draw(&ctx, Px.church, at: mp(331, 985), pixel: mark)
         Px.draw(&ctx, Px.tree, at: mp(140, 260), pixel: mark)
         Px.draw(&ctx, Px.tree, at: mp(700, 750), pixel: mark)
+        // rota decorativa tracejada de mapa antigo
+        var route = Path()
+        route.move(to: mp(700, 120))
+        route.addQuadCurve(to: mp(480, 420), control: mp(720, 300))
+        route.addQuadCurve(to: mp(620, 720), control: mp(380, 620))
+        ctx.stroke(route.strokedPath(StrokeStyle(lineWidth: 2, dash: [5, 7])),
+                   with: .color(Color(hex: 0xB59A66).opacity(0.55)), lineWidth: 1)
         // rosa dos ventos
         Px.draw(&ctx, Px.compass, at: CGPoint(x: rect.maxX - 26, y: rect.minY + 26), pixel: 4)
 

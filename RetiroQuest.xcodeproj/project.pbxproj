@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -59,7 +59,7 @@
 		8F99BB7D40AE91E7B7BCC3EA /* FishingGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FishingGameView.swift; sourceTree = "<group>"; };
 		917D2E518C215E212CF73759 /* ArcherGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcherGameView.swift; sourceTree = "<group>"; };
 		91E16A19687C06DFE430F89A /* SoapboxGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoapboxGameView.swift; sourceTree = "<group>"; };
-		9C0CA6414DC5DC733599A72D /* RetiroQuest.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = RetiroQuest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C0CA6414DC5DC733599A72D /* RetiroQuest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RetiroQuest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9E82E1BDA14843EC5107D26B /* TreasureGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TreasureGameView.swift; sourceTree = "<group>"; };
 		A64401DF432D3EC933C600A7 /* ResultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsView.swift; sourceTree = "<group>"; };
 		A8917A17367DB1B34F65C177 /* FindCatGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindCatGameView.swift; sourceTree = "<group>"; };
@@ -170,7 +170,6 @@
 			);
 			mainGroup = 4AA2219C4ED543ECD3A353DE;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -300,6 +299,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V8XBR58473;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Retiro Quest";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -323,6 +323,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V8XBR58473;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Retiro Quest";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

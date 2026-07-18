@@ -77,8 +77,24 @@ enum VolleyPainter {
         }
         ctx.stroke(beams, with: .color(Color(hex: 0xC9B98F)), lineWidth: 3)
 
+        // bandeirão do clube na parede
+        let bannerRect = CGRect(x: w * 0.2, y: h * 0.3, width: w * 0.6, height: 40)
+        ctx.fill(Path(roundedRect: bannerRect, cornerRadius: 3), with: .color(Theme.serra))
+        ctx.stroke(Path(roundedRect: bannerRect, cornerRadius: 3),
+                   with: .color(Theme.ouro), lineWidth: 2.5)
+        ctx.draw(Text("CLUBE RETIRO").font(Theme.px(10)).foregroundColor(Theme.creme),
+                 at: CGPoint(x: w / 2, y: bannerRect.midY), anchor: .center)
+
+        // piso de tacos de madeira
         ctx.fill(Path(CGRect(x: 0, y: h * 0.62, width: w, height: h * 0.38)),
                  with: .color(Color(hex: 0xCE9457)))
+        var planks = Path()
+        for i in 0..<9 {
+            let t = Double(i) / 8
+            planks.move(to: CGPoint(x: w * t, y: h * 0.62))
+            planks.addLine(to: CGPoint(x: w * 0.5 + (w * t - w * 0.5) * 1.9, y: h))
+        }
+        ctx.stroke(planks, with: .color(Color(hex: 0xB87F45).opacity(0.6)), lineWidth: 2)
         ctx.stroke(Path { p in
             p.move(to: CGPoint(x: 0, y: h * 0.62)); p.addLine(to: CGPoint(x: w, y: h * 0.62))
             p.move(to: CGPoint(x: w * 0.15, y: h * 0.62)); p.addLine(to: CGPoint(x: 0, y: h))
@@ -110,11 +126,15 @@ enum VolleyPainter {
         ctx.stroke(Path(ellipseIn: CGRect(x: contact.x - 18, y: contact.y - 18, width: 36, height: 36)),
                    with: .color(Theme.tinta.opacity(0.5)), style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
 
-        // bola em voo
+        // bola em voo (com sombra correndo no chão)
         if t > -0.2 && t < 1.15 {
             let tc = max(0, min(1.1, t))
             let x = -30 + (contact.x + 30) * tc
             let y = h * 0.72 + (contact.y - h * 0.72) * tc - sin(min(tc, 1) * .pi) * h * 0.26
+            let shadowScale = max(0.3, 1 - (h * 0.75 - y) / (h * 0.5))
+            ctx.fill(Path(ellipseIn: CGRect(x: x - 14 * shadowScale, y: h * 0.75,
+                                            width: 28 * shadowScale, height: 8 * shadowScale)),
+                     with: .color(.black.opacity(0.18)))
             Px.draw(&ctx, Px.volleyball, at: CGPoint(x: x, y: y), pixel: 5.5)
         }
     }

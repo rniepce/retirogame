@@ -116,10 +116,19 @@ enum DodgeballPainter {
         // quadra descoberta (faixas chapadas)
         GamePaint.bands(&ctx, rect: CGRect(origin: .zero, size: size),
                         colors: [Color(hex: 0x4E8F5C), Color(hex: 0x478554), Color(hex: 0x3F7A4C)])
+        // arquibancada com torcida no alto
+        GamePaint.crowd(&ctx, rect: CGRect(x: 0, y: 0, width: w, height: h * 0.09),
+                        now: e.elapsed)
+
         var lines = Path()
-        lines.addRect(CGRect(x: w * 0.06, y: h * 0.1, width: w * 0.88, height: h * 0.82))
-        lines.move(to: CGPoint(x: w * 0.06, y: h * 0.5)); lines.addLine(to: CGPoint(x: w * 0.94, y: h * 0.5))
+        lines.addRect(CGRect(x: w * 0.06, y: h * 0.12, width: w * 0.88, height: h * 0.8))
+        lines.move(to: CGPoint(x: w * 0.06, y: h * 0.52)); lines.addLine(to: CGPoint(x: w * 0.94, y: h * 0.52))
         ctx.stroke(lines, with: .color(Theme.creme.opacity(0.7)), lineWidth: 3)
+        // círculo central com as iniciais do condomínio
+        ctx.stroke(Path(ellipseIn: CGRect(x: w / 2 - 34, y: h * 0.52 - 34, width: 68, height: 68)),
+                   with: .color(Theme.creme.opacity(0.4)), lineWidth: 3)
+        ctx.draw(Text("RQ").font(Theme.px(12)).foregroundColor(Theme.creme.opacity(0.35)),
+                 at: CGPoint(x: w / 2, y: h * 0.52), anchor: .center)
 
         // arremessadores
         for (i, tx) in DodgeballEngine.throwers.enumerated() {

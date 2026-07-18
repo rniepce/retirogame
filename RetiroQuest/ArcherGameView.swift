@@ -256,6 +256,7 @@ enum ArcherPainter {
             drawReticle(&ctx, aim: aim, w: w, h: h)
         }
 
+        GamePaint.vignette(&ctx, size: size)
         if let notice = engine.notice, now < notice.until {
             drawNotice(&ctx, text: notice.text, w: w, h: h)
         }
@@ -265,7 +266,16 @@ enum ArcherPainter {
         // céu em faixas chapadas
         GamePaint.bands(&ctx, rect: CGRect(x: 0, y: 0, width: w, height: h * 0.62),
                         colors: [Color(hex: 0x8FC4DB), Color(hex: 0xB0D8DC), Color(hex: 0xD7EBDF)])
-        // serra ao fundo
+        // serra distante (camada clara) e serra próxima
+        ctx.fill(Path { p in
+            p.move(to: CGPoint(x: 0, y: h * 0.5))
+            p.addQuadCurve(to: CGPoint(x: w * 0.6, y: h * 0.47),
+                           control: CGPoint(x: w * 0.3, y: h * 0.36))
+            p.addQuadCurve(to: CGPoint(x: w, y: h * 0.5),
+                           control: CGPoint(x: w * 0.85, y: h * 0.42))
+            p.addLine(to: CGPoint(x: w, y: h * 0.62)); p.addLine(to: CGPoint(x: 0, y: h * 0.62))
+            p.closeSubpath()
+        }, with: .color(Color(hex: 0x5B8A6A)))
         ctx.fill(Path { p in
             p.move(to: CGPoint(x: 0, y: h * 0.52))
             p.addQuadCurve(to: CGPoint(x: w * 0.42, y: h * 0.50),
@@ -276,6 +286,29 @@ enum ArcherPainter {
             p.addLine(to: CGPoint(x: 0, y: h * 0.62))
             p.closeSubpath()
         }, with: .color(Color(hex: 0x2C5A3C)))
+        // varal de bandeirinhas do campo de tiro
+        let now = CACurrentMediaTime()
+        let flagY = h * 0.1
+        ctx.stroke(Path { p in
+            p.move(to: CGPoint(x: 0, y: flagY))
+            p.addQuadCurve(to: CGPoint(x: w, y: flagY), control: CGPoint(x: w / 2, y: flagY + 26))
+        }, with: .color(Theme.tinta.opacity(0.4)), lineWidth: 2)
+        let flagColors: [Color] = [Theme.terra, Theme.ouro, Theme.piscina, Color(hex: 0x8E5BA6)]
+        for i in 0..<9 {
+            let t = Double(i) / 8
+            let fx = w * t
+            let fy = flagY + 26 * 4 * t * (1 - t) * 0.5 + 8
+            let sway = sin(now * 2 + Double(i)) * 2
+            ctx.fill(Path { p in
+                p.move(to: CGPoint(x: fx - 7, y: fy - 8))
+                p.addLine(to: CGPoint(x: fx + 7, y: fy - 8))
+                p.addLine(to: CGPoint(x: fx + sway, y: fy + 8))
+                p.closeSubpath()
+            }, with: .color(flagColors[i % flagColors.count]))
+        }
+        // pólen dourado no ar
+        GamePaint.motes(&ctx, size: CGSize(width: w, height: h), now: now,
+                        count: 10, color: Theme.ouro.opacity(0.5), rise: true)
         // gramado em faixas chapadas
         GamePaint.bands(&ctx, rect: CGRect(x: 0, y: h * 0.58, width: w, height: h * 0.42),
                         colors: [Color(hex: 0x7FA85E), Color(hex: 0x6F9854), Color(hex: 0x5E874A)])

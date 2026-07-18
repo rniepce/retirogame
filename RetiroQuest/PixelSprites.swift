@@ -169,4 +169,65 @@ extension GamePaint {
                      with: .color(color))
         }
     }
+
+    /// Vinheta de tubo de CRT: moldura escura em degraus nas bordas.
+    static func vignette(_ ctx: inout GraphicsContext, size: CGSize) {
+        for (inset, alpha) in [(1.5, 0.14), (5.0, 0.07), (9.0, 0.035)] {
+            ctx.stroke(Path(CGRect(x: inset, y: inset,
+                                   width: size.width - inset * 2,
+                                   height: size.height - inset * 2)),
+                       with: .color(.black.opacity(alpha)), lineWidth: 3.5)
+        }
+    }
+
+    /// Partículas de pixel flutuando (pólen, poeira, bolhas) — determinísticas.
+    static func motes(_ ctx: inout GraphicsContext, size: CGSize, now: Double,
+                      count: Int = 12, color: Color, rise: Bool = false) {
+        let w = Double(size.width), h = Double(size.height)
+        for i in 0..<count {
+            let seed = Double(i) * 127.31 + 17
+            var x = (seed * 3.7).truncatingRemainder(dividingBy: w) + sin(now * 0.6 + seed) * 14
+            var y = (seed * 7.9).truncatingRemainder(dividingBy: h)
+                + (rise ? -1 : 1) * now * (8 + seed.truncatingRemainder(dividingBy: 7))
+            y = y.truncatingRemainder(dividingBy: h)
+            if y < 0 { y += h }
+            if x < 0 { x += w }
+            let s = 1.5 + seed.truncatingRemainder(dividingBy: 2)
+            ctx.fill(Path(CGRect(x: x, y: y, width: s, height: s)),
+                     with: .color(color))
+        }
+    }
+
+    /// Arquibancada com torcida de pixels fazendo "ola".
+    static func crowd(_ ctx: inout GraphicsContext, rect: CGRect, now: Double) {
+        ctx.fill(Path(rect), with: .color(Color(hex: 0x3A3F52)))
+        let shirts: [Color] = [Color(hex: 0xC8552F), Color(hex: 0x3FA9C9), Color(hex: 0xF2B23E),
+                               Color(hex: 0x8E5BA6), Color(hex: 0xFFF8EA), Color(hex: 0x5B7A54)]
+        let cols = max(1, Int(rect.width / 13))
+        let rows = max(1, Int(rect.height / 13))
+        for r in 0..<rows {
+            for c in 0..<cols {
+                let wave = sin(now * 2.4 + Double(c) * 0.55 + Double(r) * 0.8) * 2.5
+                let x = rect.minX + 7 + Double(c) * 13
+                let y = rect.minY + 8 + Double(r) * 13 + wave
+                ctx.fill(Path(ellipseIn: CGRect(x: x - 3, y: y - 3, width: 6, height: 6)),
+                         with: .color(shirts[(c * 7 + r * 3) % shirts.count]))
+            }
+        }
+    }
+
+    /// Reflexos de luz tremulando na água.
+    static func shimmer(_ ctx: inout GraphicsContext, rect: CGRect, now: Double, count: Int = 10) {
+        for i in 0..<count {
+            let seed = Double(i) * 91.7 + 5
+            let x = Double(rect.minX) + (seed * 5.3).truncatingRemainder(dividingBy: Double(rect.width))
+            let y = Double(rect.minY) + (seed * 9.1).truncatingRemainder(dividingBy: Double(rect.height))
+            let len = 10 + seed.truncatingRemainder(dividingBy: 16)
+            let alpha = max(0, 0.09 + 0.09 * sin(now * 1.8 + seed))
+            ctx.fill(Path(roundedRect: CGRect(x: x + sin(now + seed) * 6, y: y,
+                                              width: len, height: 2.5),
+                          cornerRadius: 1.2),
+                     with: .color(.white.opacity(alpha)))
+        }
+    }
 }

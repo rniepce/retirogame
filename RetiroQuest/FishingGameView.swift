@@ -123,11 +123,32 @@ enum FishingPainter {
                 p.addLine(to: CGPoint(x: w * 0.32 + drift, y: y))
             }, with: .color(.white.opacity(0.12)), lineWidth: 2.5)
         }
+        // reflexos do sol na água
+        GamePaint.shimmer(&ctx, rect: CGRect(x: 0, y: h * 0.44, width: w, height: h * 0.5),
+                          now: e.elapsed)
+        // ondulações ambientes que se expandem e somem
+        for k in 0..<3 {
+            let cycle = (e.elapsed * 0.35 + Double(k) * 0.33).truncatingRemainder(dividingBy: 1)
+            let (rx, ry) = [(0.22, 0.56), (0.68, 0.7), (0.4, 0.85)][k]
+            let radius = 6 + cycle * 26
+            ctx.stroke(Path(ellipseIn: CGRect(x: w * rx - radius, y: h * ry - radius * 0.4,
+                                              width: radius * 2, height: radius * 0.8)),
+                       with: .color(.white.opacity(0.25 * (1 - cycle))), lineWidth: 1.5)
+        }
         // vitórias-régias
         for (lx, ly, ls) in [(0.14, 0.62, 46.0), (0.8, 0.5, 34.0)] {
             ctx.fill(Path(ellipseIn: CGRect(x: w * lx, y: h * ly, width: ls, height: ls * 0.4)),
                      with: .color(Color(hex: 0x4E8F5C)))
         }
+        // libélula passeando
+        let dfx = w * (0.5 + 0.4 * sin(e.elapsed * 0.3))
+        let dfy = h * (0.46 + 0.05 * sin(e.elapsed * 1.1))
+        ctx.fill(Path(roundedRect: CGRect(x: dfx - 6, y: dfy - 1.5, width: 12, height: 3),
+                      cornerRadius: 1.5),
+                 with: .color(Color(hex: 0x3FA9C9)))
+        let wing = abs(sin(e.elapsed * 14)) * 5
+        ctx.fill(Path(ellipseIn: CGRect(x: dfx - 3, y: dfy - 3 - wing, width: 6, height: wing + 2)),
+                 with: .color(.white.opacity(0.5)))
 
         // píer e vara
         ctx.fill(Path(roundedRect: CGRect(x: w * 0.62, y: h * 0.86, width: w * 0.38, height: 26),
@@ -174,6 +195,20 @@ enum FishingPainter {
                 .font(Theme.px(9))
                 .foregroundColor(.white.opacity(0.85)),
                      at: CGPoint(x: e.bobber.x, y: e.bobber.y), anchor: .center)
+        }
+
+        // juncos balançando no canto
+        for i in 0..<5 {
+            let rx = w * 0.03 + Double(i) * 11
+            let sway = sin(e.elapsed * 1.4 + Double(i)) * 4
+            ctx.stroke(Path { p in
+                p.move(to: CGPoint(x: rx, y: h * 0.98))
+                p.addQuadCurve(to: CGPoint(x: rx + sway, y: h * 0.8),
+                               control: CGPoint(x: rx - 2, y: h * 0.89))
+            }, with: .color(Color(hex: 0x4E8F5C)), style: StrokeStyle(lineWidth: 4, lineCap: .round))
+            ctx.fill(Path(roundedRect: CGRect(x: rx + sway - 2.5, y: h * 0.76, width: 5, height: 14),
+                          cornerRadius: 2.5),
+                     with: .color(Color(hex: 0x8A6238)))
         }
 
         // peixe fisgado subindo (sprite recolorido por raridade)

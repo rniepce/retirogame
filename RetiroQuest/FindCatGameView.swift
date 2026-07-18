@@ -119,10 +119,48 @@ enum FindCatPainter {
         ctx.fill(Path(ellipseIn: CGRect(x: w * 0.70, y: h * 0.08, width: w * 0.26, height: h * 0.22)),
                  with: .color(Color(hex: 0x3C6B48)))
 
+        // varal entre a casa e a árvore, com roupas balançando
+        let lineStart = CGPoint(x: w * 0.5, y: h * 0.2)
+        let lineEnd = CGPoint(x: w * 0.81, y: h * 0.26)
+        ctx.stroke(Path { p in
+            p.move(to: lineStart)
+            p.addQuadCurve(to: lineEnd, control: CGPoint(x: w * 0.65, y: h * 0.24))
+        }, with: .color(Theme.tinta.opacity(0.5)), lineWidth: 1.5)
+        let clothes: [Color] = [Theme.terra, Theme.piscina, Theme.ouro]
+        for (i, cor) in clothes.enumerated() {
+            let t = 0.22 + Double(i) * 0.28
+            let cx = lineStart.x + (lineEnd.x - lineStart.x) * t
+            let cy = lineStart.y + (lineEnd.y - lineStart.y) * t + 14 * 4 * t * (1 - t) * 0.4
+            let sway = sin(e.elapsed * 1.8 + Double(i) * 2) * 3
+            ctx.fill(Path(roundedRect: CGRect(x: cx - 8 + sway, y: cy, width: 16, height: 20),
+                          cornerRadius: 2),
+                     with: .color(cor))
+        }
+
         // gramado
         ctx.fill(Path(CGRect(x: 0, y: h * 0.45, width: w, height: h * 0.55)),
                  with: .linearGradient(Gradient(colors: [Color(hex: 0x8FB569), Color(hex: 0x6D9450)]),
                                        startPoint: CGPoint(x: 0, y: h * 0.45), endPoint: CGPoint(x: 0, y: h)))
+        // canteiros de flores
+        for (fx, fy) in [(0.3, 0.52), (0.62, 0.78), (0.08, 0.68)] {
+            for i in 0..<4 {
+                let px2 = w * fx + Double(i) * 9
+                ctx.fill(Path(ellipseIn: CGRect(x: px2, y: h * fy, width: 4, height: 4)),
+                         with: .color([Theme.ouro, Color(hex: 0xE86FA0), Theme.creme][i % 3]))
+            }
+        }
+        // borboletas voando
+        for i in 0..<2 {
+            let seed = Double(i) * 3.7
+            let bx = w * (0.5 + 0.38 * sin(e.elapsed * 0.35 + seed))
+            let by = h * (0.55 + 0.16 * sin(e.elapsed * 0.5 + seed * 2))
+            let flap = abs(sin(e.elapsed * 9 + seed)) * 4
+            let cor = i == 0 ? Theme.ouro : Color(hex: 0xE86FA0)
+            ctx.fill(Path(ellipseIn: CGRect(x: bx - 4 - flap / 2, y: by - 3, width: 4 + flap / 2, height: 6)),
+                     with: .color(cor))
+            ctx.fill(Path(ellipseIn: CGRect(x: bx, y: by - 3, width: 4 + flap / 2, height: 6)),
+                     with: .color(cor))
+        }
 
         // dicas dos gatos ATRÁS dos esconderijos (orelhas/rabo aparecem por cima depois)
         for hideout in e.hideouts where hideout.active {

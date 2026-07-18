@@ -112,8 +112,21 @@ enum HarvestPainter {
         // quintal da casa do ipê (céu em faixas)
         GamePaint.bands(&ctx, rect: CGRect(x: 0, y: 0, width: w, height: h * 0.68),
                         colors: [Color(hex: 0xA8D4E4), Color(hex: 0xC0E0E2), Color(hex: 0xD7EBDF)])
+        Px.draw(&ctx, Px.sun, at: CGPoint(x: w * 0.12, y: h * 0.07), pixel: 4.5)
+        Px.draw(&ctx, Px.cloud, at: CGPoint(x: w * 0.7 + sin(e.elapsed * 0.2) * 14, y: h * 0.06), pixel: 3.5)
         ctx.fill(Path(CGRect(x: 0, y: h * 0.68, width: w, height: h * 0.32)),
                  with: .color(Color(hex: 0x7FA85E)))
+        // cerquinha da horta
+        var fence = Path()
+        fence.move(to: CGPoint(x: 0, y: h * 0.72)); fence.addLine(to: CGPoint(x: w, y: h * 0.72))
+        for i in 0..<9 {
+            let x = w * (0.05 + Double(i) * 0.115)
+            fence.move(to: CGPoint(x: x, y: h * 0.69)); fence.addLine(to: CGPoint(x: x, y: h * 0.76))
+        }
+        ctx.stroke(fence, with: .color(Color(hex: 0x8A6238)), lineWidth: 3.5)
+        // folhinhas caindo
+        GamePaint.motes(&ctx, size: CGSize(width: w, height: h * 0.66), now: e.elapsed,
+                        count: 8, color: Color(hex: 0x4E8F5C).opacity(0.7))
 
         // tronco e copa
         let crown = e.crownRect(size: size)

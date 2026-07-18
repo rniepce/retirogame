@@ -149,6 +149,9 @@ enum SwimPainter {
         ctx.fill(Path(CGRect(x: pool.minX, y: pool.maxY - 8, width: pool.width, height: 8)),
                  with: .color(Theme.creme.opacity(0.85)))
 
+        // reflexos tremulando na água
+        GamePaint.shimmer(&ctx, rect: pool.insetBy(dx: 10, dy: 14), now: e.elapsed, count: 12)
+
         // raias
         let laneW = pool.width / 3
         for i in 1..<3 {
@@ -161,6 +164,34 @@ enum SwimPainter {
                 y += 14
             }
             ctx.stroke(rope, with: .color(Theme.creme.opacity(0.6)), lineWidth: 3)
+        }
+
+        // bandeirolas de virada (5 m) cruzando a piscina
+        for flagY in [pool.minY + 34, pool.maxY - 34] {
+            ctx.stroke(Path { p in
+                p.move(to: CGPoint(x: pool.minX - 8, y: flagY))
+                p.addLine(to: CGPoint(x: pool.maxX + 8, y: flagY))
+            }, with: .color(Theme.tinta.opacity(0.5)), lineWidth: 1.5)
+            for i in 0..<8 {
+                let fx = pool.minX + pool.width * (Double(i) + 0.5) / 8
+                let sway = sin(e.elapsed * 2.5 + Double(i)) * 1.5
+                ctx.fill(Path { p in
+                    p.move(to: CGPoint(x: fx - 5, y: flagY))
+                    p.addLine(to: CGPoint(x: fx + 5, y: flagY))
+                    p.addLine(to: CGPoint(x: fx + sway, y: flagY + 9))
+                    p.closeSubpath()
+                }, with: .color(i % 2 == 0 ? Theme.terra : Theme.ouro))
+            }
+        }
+
+        // blocos de largada numerados
+        for lane in 0..<3 {
+            let bx = pool.minX + pool.width / 3 * (Double(lane) + 0.5)
+            ctx.fill(Path(roundedRect: CGRect(x: bx - 13, y: pool.maxY - 4, width: 26, height: 14),
+                          cornerRadius: 3),
+                     with: .color(Theme.creme))
+            ctx.draw(Text("\(lane + 1)").font(Theme.px(8)).foregroundColor(Theme.tinta),
+                     at: CGPoint(x: bx, y: pool.maxY + 4), anchor: .center)
         }
 
         // zona de virada piscando quando o jogador se aproxima

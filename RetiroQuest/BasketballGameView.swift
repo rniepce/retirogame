@@ -103,6 +103,23 @@ enum BasketballPainter {
                         colors: [Color(hex: 0xA8D4E4), Color(hex: 0xC0E0E2), Color(hex: 0xD7EBDF)])
         GamePaint.bands(&ctx, rect: CGRect(x: 0, y: h * 0.5, width: w, height: h * 0.5),
                         colors: [Color(hex: 0xC28352), Color(hex: 0xBD7E4E), Color(hex: 0xB8794A)])
+        // nuvens do entardecer e alambrado atrás da quadra
+        Px.draw(&ctx, Px.cloud, at: CGPoint(x: w * 0.2 + sin(e.elapsed * 0.2) * 10, y: h * 0.09), pixel: 3.5)
+        Px.draw(&ctx, Px.cloud, at: CGPoint(x: w * 0.75 + sin(e.elapsed * 0.15) * 12, y: h * 0.16), pixel: 4.5)
+        var fence = Path()
+        let fenceTop = h * 0.34, fenceBottom = h * 0.5
+        for i in 0...12 {
+            let x = w * Double(i) / 12
+            fence.move(to: CGPoint(x: x - 20, y: fenceTop))
+            fence.addLine(to: CGPoint(x: x + 20, y: fenceBottom))
+            fence.move(to: CGPoint(x: x + 20, y: fenceTop))
+            fence.addLine(to: CGPoint(x: x - 20, y: fenceBottom))
+        }
+        ctx.stroke(fence, with: .color(Color(hex: 0x57636B).opacity(0.35)), lineWidth: 1.5)
+        ctx.stroke(Path { p in
+            p.move(to: CGPoint(x: 0, y: fenceTop)); p.addLine(to: CGPoint(x: w, y: fenceTop))
+        }, with: .color(Color(hex: 0x57636B).opacity(0.6)), lineWidth: 3)
+
         // linhas da quadra
         var lines = Path()
         lines.move(to: CGPoint(x: w * 0.1, y: h)); lines.addLine(to: CGPoint(x: w * 0.35, y: h * 0.52))
@@ -134,6 +151,11 @@ enum BasketballPainter {
 
         // bola
         if let (pos, scale) = e.ballPose(size: size) {
+            let floorY = h * 0.9
+            let airFrac = max(0.2, 1 - (floorY - pos.y) / (h * 0.6))
+            ctx.fill(Path(ellipseIn: CGRect(x: pos.x - 16 * airFrac, y: floorY,
+                                            width: 32 * airFrac, height: 8 * airFrac)),
+                     with: .color(.black.opacity(0.15)))
             Px.draw(&ctx, Px.basketball, at: pos, pixel: 6.5 * scale)
         } else {
             ctx.fill(Path(ellipseIn: CGRect(x: e.ballStart.x - 22, y: e.ballStart.y + 20,

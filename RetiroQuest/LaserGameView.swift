@@ -105,12 +105,32 @@ enum LaserPainter {
         }
         ctx.stroke(grid, with: .color(Color(hex: 0x7CE0D6).opacity(0.08)), lineWidth: 1)
 
-        // piso
+        // piso com grade em perspectiva
         ctx.fill(Path(CGRect(x: 0, y: h * 0.82, width: w, height: h * 0.18)),
                  with: .color(Color(hex: 0x101425)))
+        var floorGrid = Path()
+        for i in 0..<7 {
+            let t = Double(i) / 6
+            floorGrid.move(to: CGPoint(x: w * t, y: h * 0.82))
+            floorGrid.addLine(to: CGPoint(x: w * 0.5 + (w * t - w * 0.5) * 2.2, y: h))
+        }
+        ctx.stroke(floorGrid, with: .color(Color(hex: 0x7CE0D6).opacity(0.15)), lineWidth: 1.5)
         ctx.stroke(Path { p in
             p.move(to: CGPoint(x: 0, y: h * 0.82)); p.addLine(to: CGPoint(x: w, y: h * 0.82))
         }, with: .color(Color(hex: 0x7CE0D6).opacity(0.5)), lineWidth: 2)
+
+        // moldura neon pulsante + poeira ciano subindo
+        let pulse = 0.25 + 0.18 * sin(e.elapsed * 3)
+        ctx.stroke(Path(CGRect(x: 7, y: 7, width: w - 14, height: h - 14)),
+                   with: .color(Color(hex: 0x7CE0D6).opacity(pulse)), lineWidth: 3)
+        GamePaint.motes(&ctx, size: size, now: e.elapsed, count: 10,
+                        color: Color(hex: 0x7CE0D6).opacity(0.4), rise: true)
+        // interferência de CRT ocasional
+        if sin(e.elapsed * 7.3) > 0.96 {
+            let gy = (e.elapsed * 431).truncatingRemainder(dividingBy: h)
+            ctx.fill(Path(CGRect(x: 0, y: gy, width: w, height: 2.5)),
+                     with: .color(.white.opacity(0.12)))
+        }
 
         let radius = min(w, h) * 0.09
         // soquetes

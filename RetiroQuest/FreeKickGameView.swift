@@ -166,9 +166,11 @@ enum FreeKickPainter {
             ctx.fill(Path(CGRect(x: 0, y: y0, width: w, height: h * 0.075)),
                      with: .color(.white.opacity(0.045)))
         }
-        // céu atrás do gol
-        ctx.fill(Path(CGRect(x: 0, y: 0, width: w, height: h * 0.13)),
-                 with: .color(Color(hex: 0xA8D4E4)))
+        // torcida atrás do gol fazendo a ola
+        GamePaint.crowd(&ctx, rect: CGRect(x: 0, y: 0, width: w, height: h * 0.12),
+                        now: e.elapsed)
+        ctx.fill(Path(CGRect(x: 0, y: h * 0.12, width: w, height: 4)),
+                 with: .color(Theme.tinta.opacity(0.5)))
 
         // gol
         let gy = e.goalLineY, gHalf = e.goalHalf
