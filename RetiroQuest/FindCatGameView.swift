@@ -4,7 +4,7 @@ import SwiftUI
 /// rabo aparecem. Toque neles antes do tempo acabar; erro custa 3 segundos.
 final class FindCatEngine: MiniEngine {
     struct Hideout {
-        let rel: CGPoint      // posição relativa na tela
+        var rel: CGPoint      // posição relativa na tela (com jitter por partida)
         let hint: Hint        // o que fica visível
         var active = false
         var found = false
@@ -34,6 +34,11 @@ final class FindCatEngine: MiniEngine {
     var remaining: Double { Self.duration - elapsed - penalty }
 
     override func didStart() {
+        // posições variam um pouco a cada partida — decorar não resolve
+        for i in hideouts.indices {
+            hideouts[i].rel.x = min(max(hideouts[i].rel.x + Double.random(in: -0.035...0.035), 0.05), 0.95)
+            hideouts[i].rel.y = min(max(hideouts[i].rel.y + Double.random(in: -0.03...0.03), 0.1), 0.92)
+        }
         var picks = Set<Int>()
         while picks.count < 5 { picks.insert(Int.random(in: 0..<hideouts.count)) }
         for (n, i) in picks.enumerated() {

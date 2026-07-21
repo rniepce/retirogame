@@ -21,9 +21,9 @@ final class BasketballEngine: MiniEngine {
     private var driftPhase = 0.0
 
     var ballStart: CGPoint { CGPoint(x: viewSize.width / 2, y: viewSize.height * 0.85) }
-    /// A partir da 4ª bola a cesta desliza de um lado para o outro.
+    /// A partir da 4ª bola a cesta desliza devagar de um lado para o outro.
     var rimCenter: CGPoint {
-        let drift = ball >= 3 ? sin(driftPhase) * viewSize.width * 0.16 : 0
+        let drift = ball >= 3 ? sin(driftPhase) * viewSize.width * 0.12 : 0
         return CGPoint(x: viewSize.width / 2 + drift, y: viewSize.height * 0.27)
     }
 
@@ -33,7 +33,7 @@ final class BasketballEngine: MiniEngine {
     }
 
     override func tick(dt: Double) {
-        if ball >= 3 { driftPhase += dt * 1.5 }
+        if ball >= 3 { driftPhase += dt * 1.0 }
         guard var s = shot else { return }
         s.t += dt / Self.flightTime
         if s.t >= 1 {
@@ -69,7 +69,7 @@ final class BasketballEngine: MiniEngine {
         else { outcome = .miss }
         switch outcome {
         case .swish: score += 10; say("🔥 SÓ REDE! +10", for: 1.1); Haptics.success()
-        case .bucket: score += 6; say("🏀 Cesta! +6", for: 1.1); Haptics.success()
+        case .bucket: score += 7; say("🏀 Cesta! +7", for: 1.1); Haptics.success()
         case .rim: score += 2; say("No aro… +2"); Haptics.tap()
         case .miss: say("Errou tudo!"); Haptics.error()
         }

@@ -48,7 +48,8 @@ final class FishingEngine: MiniEngine {
             if elapsed > showUntil {
                 caught = nil
                 phase = castsLeft > 0 ? .idle : .showing
-                if castsLeft == 0 { finish(points: score, maxPoints: 80) }
+                // máx 68: fisgar as 8 (mesmo só comuns, 56 pts) já garante 3 estrelas
+                if castsLeft == 0 { finish(points: min(score, 68), maxPoints: 68) }
             }
         case .idle: break
         }
@@ -60,9 +61,10 @@ final class FishingEngine: MiniEngine {
             guard castsLeft > 0 else { return }
             phase = .waiting
             biteAt = elapsed + Double.random(in: 1.5...4.0)
+            // beliscadas falsas nunca coexistem com a sombra: a sombra é sinal confiável
             fakes = (0..<Int.random(in: 0...2)).map { _ in
-                Double.random(in: elapsed + 0.8...max(biteAt - 0.5, elapsed + 0.9))
-            }
+                Double.random(in: elapsed + 0.8...max(biteAt - 1.5, elapsed + 0.9))
+            }.filter { $0 < biteAt - 1.3 }
             say("Espera…", for: 0.8)
             Haptics.light()
         case .waiting:
@@ -72,13 +74,13 @@ final class FishingEngine: MiniEngine {
             Haptics.error()
             consumeCast()
         case .bite:
-            // reflexo rápido (< 0,35 s) é a única chance de peixe lendário
+            // reflexo rápido (< 0,45 s) é a única chance de peixe lendário
             let reaction = elapsed - biteAt
-            let legendaryChance = reaction < 0.35 ? 0.2 : 0.0
+            let legendaryChance = reaction < 0.45 ? 0.2 : 0.0
             let roll = Double.random(in: 0...1)
             let fish: (String, Int) = roll < legendaryChance
                 ? ("🐡", 16)
-                : (roll < legendaryChance + 0.3 ? ("🐠", 10) : ("🐟", 6))
+                : (roll < legendaryChance + 0.3 ? ("🐠", 10) : ("🐟", 7))
             caught = fish
             score += fish.1
             phase = .showing

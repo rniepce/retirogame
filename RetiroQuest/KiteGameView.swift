@@ -21,12 +21,16 @@ final class KiteEngine: MiniEngine {
     private var gustAt = 5.0
     private var gustUntil = -1.0
     private var gustForce = 0.0
+    private var nextGustForce = (Bool.random() ? 1.0 : -1.0) * Double.random(in: 260...380)
     private var nextStarAt = 1.5
     private var started = false
 
     var gustWarning: Bool { elapsed > gustAt - 0.7 && elapsed < gustAt }
     var gustActive: Bool { elapsed < gustUntil }
-    var gustDirection: Double { gustForce > 0 ? 1 : -1 }
+    /// Durante o aviso, aponta a rajada QUE VEM (pré-sorteada), não a anterior.
+    var gustDirection: Double {
+        gustActive ? (gustForce > 0 ? 1 : -1) : (nextGustForce > 0 ? 1 : -1)
+    }
 
     override func didStart() {
         setHUD("🪁 ⭐0 · 60s")
@@ -76,7 +80,9 @@ final class KiteEngine: MiniEngine {
         if gustActive { windX += gustForce }
         if elapsed >= gustAt && gustUntil < elapsed {
             gustUntil = elapsed + 1.2
-            gustForce = (Bool.random() ? 1 : -1) * Double.random(in: 130...210)
+            gustForce = nextGustForce
+            velocity.dy += 0.32 * abs(gustForce)   // rajada também empurra para baixo
+            nextGustForce = (Bool.random() ? 1 : -1) * Double.random(in: 260...380)
             gustAt = elapsed + Double.random(in: 3.5...6.5)
             say("💨 Rajada!", for: 0.8)
             Haptics.tap()
@@ -120,6 +126,12 @@ final class KiteEngine: MiniEngine {
             nextStarAt = elapsed + 1.2
             say("⭐ +10", for: 0.6)
             Haptics.success()
+            // coletou todas: fim imediato, sem tempo morto
+            if starsCollected >= Self.maxStars {
+                finish(points: max(0, starsCollected * 10 + 20 - penalty),
+                       maxPoints: Self.maxStars * 10 + 20)
+                return
+            }
         }
 
         setHUD("🪁 ⭐\(starsCollected) · \(Int(remaining))s")

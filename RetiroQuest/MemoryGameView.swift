@@ -100,7 +100,7 @@ struct MemoryGameView: View {
             Haptics.success()
             if cards.allSatisfy(\.matched) {
                 won = true
-                let points = max(0, 80 - max(0, moves - 8) * 6)
+                let points = max(0, 80 - max(0, moves - 8) * 4)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                     onFinish(MinigameResult(
                         points: points, stars: starsFor(score: points, max: 80),

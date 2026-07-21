@@ -33,8 +33,11 @@ final class TreasureEngine: MiniEngine {
         return CGRect(x: (size.width - mw) / 2, y: 110, width: mw, height: mh)
     }
 
+    private var lastDigAt = -1.0
+
     override func tap(at p: CGPoint) {
         guard !done, digsLeft > 0, viewSize != .zero else { return }
+        guard elapsed - lastDigAt > 0.4 else { return }   // toque duplo não queima 2 pás
         let rect = mapRect(size: viewSize)
         guard rect.contains(p) else { return }
         let rel = CGPoint(x: (p.x - rect.minX) / rect.width,
@@ -45,6 +48,7 @@ final class TreasureEngine: MiniEngine {
             return
         }
         digsLeft -= 1
+        lastDigAt = elapsed
         let dist = hypot((rel.x - treasure.x) * 800, (rel.y - treasure.y) * 1060)
         let heat: Heat
         if dist < 55 {
@@ -67,8 +71,8 @@ final class TreasureEngine: MiniEngine {
         if !found {
             // a pá "aponta" na direção do tesouro — com bastante ruído
             let angle = Double(atan2((treasure.y - rel.y) * 1060, (treasure.x - rel.x) * 800))
-                + Double.random(in: -0.5...0.5)
-            hint = (from: rel, angle: angle, until: elapsed + 1.7)
+                + Double.random(in: -0.35...0.35)
+            hint = (from: rel, angle: angle, until: elapsed + 2.6)
         }
         setHUD("⛏️ \(digsLeft) pás")
 

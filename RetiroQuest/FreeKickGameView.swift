@@ -49,14 +49,18 @@ final class FreeKickEngine: MiniEngine {
         }
     }
 
+    private(set) var livePower = 0.0
+
     override func dragChanged(start: CGPoint, current: CGPoint) {
         guard shot == nil, kick < Self.total, elapsed >= nextReady else { return }
         trail.append(current)
         if trail.count > 40 { trail.removeFirst() }
+        let dy = current.y - start.y
+        livePower = dy < 0 ? min(hypot(current.x - start.x, dy) / (viewSize.height * 0.5), 1.1) : 0
     }
 
     override func dragEnded(start: CGPoint, current: CGPoint) {
-        defer { trail = [] }
+        defer { trail = []; livePower = 0 }
         guard shot == nil, kick < Self.total, elapsed >= nextReady, viewSize != .zero else { return }
         let dx = current.x - start.x, dy = current.y - start.y
         guard dy < -40 else { return }
@@ -102,14 +106,15 @@ final class FreeKickEngine: MiniEngine {
         let straightX = Double(ballStart.x) + (targetX - Double(ballStart.x)) * 0.45
         let bendAtWall = curve * Double(w) * 0.30 * sin(Double.pi * 0.45)
         let xAtWall = straightX - bendAtWall
-        if abs(xAtWall - Double(center)) < wallHalf && power < 0.58 && abs(curve) < 0.35 {
+        // sem curva, só chute muito forte (0.70+) passa por cima — a curva vale a pena
+        if abs(xAtWall - Double(center)) < wallHalf && power < 0.70 && abs(curve) < 0.35 {
             return .blocked
         }
         let off = abs(targetX - center)
         if abs(off - goalHalf) < 9 { return .post }
         if off > goalHalf { return .out }
-        // goleiro: chute forte no canto é indefensável — mas ele melhora a cada gol
-        let reach = goalHalf * (1.18 - power) * (1 + 0.15 * Double(goals))
+        // goleiro: chute forte no canto é indefensável — melhora até o 2º gol
+        let reach = goalHalf * (1.18 - power) * (1 + 0.15 * Double(min(goals, 2)))
         if off < reach { return .saved }
         return .goal(off > goalHalf * 0.55 ? 10 : 8)
     }
@@ -204,6 +209,24 @@ enum FreeKickPainter {
         for i in -1...1 {
             drawPlayer(&ctx, at: CGPoint(x: w / 2 + Double(i) * 40, y: e.wallY + jump),
                        shirt: Color(hex: 0x2E4057), lean: 0, scale: 1.25)
+        }
+
+        // barra de força ao vivo (zona vermelha = por cima do gol)
+        if e.livePower > 0 {
+            ctx.fill(Path(roundedRect: CGRect(x: w / 2 - 70, y: h - 86, width: 140, height: 14),
+                          cornerRadius: 7),
+                     with: .color(Theme.serraDark.opacity(0.78)))
+            let frac = e.livePower / 1.1
+            ctx.fill(Path(roundedRect: CGRect(x: w / 2 - 66, y: h - 83, width: 132 * frac, height: 8),
+                          cornerRadius: 4),
+                     with: .color(e.livePower > 0.92 ? Color(hex: 0xE8503A) : Theme.terra))
+            let dangerX = w / 2 - 66 + 132 * (0.92 / 1.1)
+            ctx.fill(Path(CGRect(x: dangerX, y: h - 86, width: 2.5, height: 14)),
+                     with: .color(Theme.creme))
+            if e.livePower > 0.92 {
+                ctx.draw(Text("FORTE DEMAIS!").font(Theme.px(8)).foregroundColor(Color(hex: 0xE8503A)),
+                         at: CGPoint(x: w / 2, y: h - 98), anchor: .center)
+            }
         }
 
         // rastro do dedo

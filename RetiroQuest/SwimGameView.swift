@@ -23,6 +23,7 @@ final class SwimEngine: MiniEngine {
     private(set) var lastSide = 0          // 0 nenhum, 1 esquerda, 2 direita
     private(set) var turnBoosted = false
     private var turnHandled = false
+    private var lastStrokeAt = -1.0
     private(set) var finishTime: Double?
     private(set) var cpus = [
         CPU(pace: 0.112, wobble: 0.9),
@@ -85,8 +86,8 @@ final class SwimEngine: MiniEngine {
         guard !finished, finishTime == nil, viewSize != .zero else { return }
         let side = p.x < viewSize.width / 2 ? 1 : 2
 
-        // virada perfeita: toque com o corpo colado na parede do fundo
-        if nearWall && progress > 0.93 {
+        // virada perfeita: segure a braçada e toque colado na parede do fundo
+        if nearWall && progress > 0.93 && elapsed - lastStrokeAt > 0.25 {
             turnBoosted = true
             turnHandled = true
             speed = min(speed + 0.22, 0.4)
@@ -96,14 +97,15 @@ final class SwimEngine: MiniEngine {
         }
 
         if side != lastSide {
-            speed = min(speed + 0.095, 0.34)
+            speed = min(speed + 0.06, 0.34)
             strokes += 1
             Haptics.light()
         } else {
-            speed = min(speed + 0.02, 0.34)
+            speed = min(speed + 0.015, 0.34)
             if strokes % 4 == 0 { say("ALTERNE OS LADOS!", for: 0.6) }
         }
         lastSide = side
+        lastStrokeAt = elapsed
     }
 
     private func end() {
@@ -112,7 +114,7 @@ final class SwimEngine: MiniEngine {
         var points: Int
         switch place {
         case 1: points = 42
-        case 2: points = 24
+        case 2: points = 28
         default: points = finishTime == nil ? 4 : 10
         }
         if turnBoosted { points += 5 }

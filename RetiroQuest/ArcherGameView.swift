@@ -45,9 +45,11 @@ final class ArcherEngine: NSObject, ObservableObject {
     // MARK: geometria (no espaço da view)
 
     private var driftPhase = 0.0
+    private var driftActive = false
     /// Nas duas últimas flechas o alvo desliza de um lado para o outro.
+    /// (Ativado só APÓS a 3ª flecha resolver — nada de mover alvo em pleno voo.)
     var targetDrift: CGFloat {
-        arrows <= 2 && !finished ? sin(driftPhase) * targetRadius * 0.55 : 0
+        driftActive && !finished ? sin(driftPhase) * targetRadius * 0.55 : 0
     }
     var targetCenter: CGPoint {
         CGPoint(x: viewSize.width / 2 + targetDrift, y: viewSize.height * 0.34)
@@ -87,7 +89,7 @@ final class ArcherEngine: NSObject, ObservableObject {
         let dt = min(now - lastTime, 0.05)
         lastTime = now
 
-        if arrows <= 2 && !finished { driftPhase += dt * 1.7 }
+        if driftActive && !finished { driftPhase += dt * 1.7 }
 
         if var f = flight {
             f.t += dt / Self.flightDuration
@@ -159,6 +161,7 @@ final class ArcherEngine: NSObject, ObservableObject {
         }
         wind = .random(in: -2.4...2.4)
         if arrows == 2 {
+            driftActive = true
             notice = Notice(text: "🎯 O ALVO VAI SE MOVER!", until: now + 1.5)
         }
         if arrows <= 0 { endAt = now + 1.1 }
@@ -254,6 +257,12 @@ enum ArcherPainter {
 
         if let aim {
             drawReticle(&ctx, aim: aim, w: w, h: h)
+            // retícula-fantasma: onde a flecha REALMENTE vai chegar com o vento
+            let ghost = CGPoint(x: aim.point.x + engine.wind * radius * 0.18,
+                                y: aim.point.y - radius * 0.12)
+            ctx.stroke(Path(ellipseIn: CGRect(x: ghost.x - 8, y: ghost.y - 8, width: 16, height: 16)),
+                       with: .color(Theme.creme.opacity(0.75)),
+                       style: StrokeStyle(lineWidth: 2, dash: [3, 3]))
         }
 
         GamePaint.vignette(&ctx, size: size)

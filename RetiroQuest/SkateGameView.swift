@@ -27,13 +27,14 @@ final class SkateEngine: MiniEngine {
     override func tick(dt: Double) {
         let remaining = Self.duration - elapsed
         if remaining <= 0 {
-            finish(points: score, maxPoints: 150)
+            finish(points: min(score, 150), maxPoints: 150)
             return
         }
         if airborne {
             if elapsed - airStart >= airTime {
                 airborne = false
                 phase = airSide > 0 ? .pi : 0   // volta descendo do mesmo lado
+                lastS = -cos(phase) * amp       // evita relançamento no frame seguinte
                 if tricksInAir > 0 { Haptics.light() }
             }
         } else {
@@ -61,6 +62,11 @@ final class SkateEngine: MiniEngine {
             amp = min(amp + 0.17, 1.05)
             say("Embalou!", for: 0.5)
             Haptics.light()
+        } else {
+            // toque fora de hora quebra o ritmo — spam cego não funciona
+            amp = max(amp - 0.08, 0.3)
+            say("Fora do ritmo!", for: 0.5)
+            Haptics.error()
         }
     }
 

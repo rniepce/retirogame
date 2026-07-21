@@ -22,6 +22,8 @@ final class HarvestEngine: MiniEngine {
     private(set) var ripened = 0
     private(set) var score = 0
     private(set) var beeSpot = 0
+    private(set) var beeFrom = 0
+    private(set) var beeProgress = 1.0   // 1 = pousada
     private var beeMoveAt = 3.0
 
     override func didStart() {
@@ -39,11 +41,14 @@ final class HarvestEngine: MiniEngine {
             finish(points: score, maxPoints: max(ripened * 10, 10))
             return
         }
-        // a abelha muda de fruta de tempos em tempos
+        // a abelha VOA (0,8s) até a próxima fruta — dá para ver para onde ela vai
         if elapsed > beeMoveAt {
+            beeFrom = beeSpot
             beeSpot = Int.random(in: 0..<fruits.count)
+            beeProgress = 0
             beeMoveAt = elapsed + Double.random(in: 2.5...4.0)
         }
+        beeProgress = min(1, beeProgress + dt / 0.8)
         for i in fruits.indices {
             let age = elapsed - fruits[i].since
             switch fruits[i].state {
@@ -80,8 +85,8 @@ final class HarvestEngine: MiniEngine {
         for i in fruits.indices {
             let c = fruitCenter(i, size: viewSize)
             guard hypot(p.x - c.x, p.y - c.y) < 34 else { continue }
-            // colher a fruta onde a abelha está dá ferroada!
-            if i == beeSpot, fruits[i].state != .empty {
+            // colher a fruta onde a abelha está POUSADA dá ferroada!
+            if i == beeSpot, beeProgress >= 1, fruits[i].state == .ripe {
                 score = max(0, score - 5)
                 say("🐝 FERROADA! -5")
                 Haptics.error()
@@ -163,11 +168,16 @@ enum HarvestPainter {
             }
         }
 
-        // abelha guardiã
-        let beeC = e.fruitCenter(e.beeSpot, size: size)
+        // abelha guardiã voando entre as frutas
+        let beeA = e.fruitCenter(e.beeFrom, size: size)
+        let beeB = e.fruitCenter(e.beeSpot, size: size)
+        let t = e.beeProgress
+        let smooth = t * t * (3 - 2 * t)
+        let beeC = CGPoint(x: beeA.x + (beeB.x - beeA.x) * smooth,
+                           y: beeA.y + (beeB.y - beeA.y) * smooth - sin(t * .pi) * 24)
         Px.draw(&ctx, Px.bee,
                 at: CGPoint(x: beeC.x + 12, y: beeC.y - 14 + sin(e.elapsed * 8) * 3),
-                pixel: 3, flipX: sin(e.elapsed * 2) < 0)
+                pixel: 3, flipX: beeB.x < beeA.x)
 
         // cesta
         Px.draw(&ctx, Px.basket, at: CGPoint(x: w * 0.82, y: h * 0.8), pixel: 5.4)

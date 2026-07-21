@@ -66,7 +66,7 @@ final class BMXEngine: MiniEngine {
         if airborne {
             vy -= 900 * dt
             altitude += vy * dt
-            if holding { angle += 6.8 * dt }   // backflip
+            if holding { angle += 10.5 * dt }   // backflip (giro completo cabe no tempo de ar)
             if altitude <= ground {
                 altitude = ground
                 airborne = false

@@ -34,9 +34,10 @@ final class VolleyEngine: MiniEngine {
 
     override func tap(at p: CGPoint) {
         guard ballIndex < Self.total, !resolved, progress > 0 else { return }
-        let error = abs(progress - 1.0)
-        if error <= 0.06 { resolve(gain: 10, message: "PERFEITO! +10") }
-        else if error <= 0.16 { resolve(gain: 6, message: "Boa! +6") }
+        // janelas em TEMPO (não em fração do voo): não encolhem com o saque rápido
+        let errorSeconds = abs(progress - 1.0) * flightTime
+        if errorSeconds <= 0.12 { resolve(gain: 10, message: "PERFEITO! +10") }
+        else if errorSeconds <= 0.24 { resolve(gain: 6, message: "Boa! +6") }
         else { resolve(gain: 0, message: progress < 1 ? "Cedo demais!" : "Tarde demais!") }
     }
 

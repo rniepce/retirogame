@@ -17,6 +17,8 @@ final class LaserEngine: MiniEngine {
     private(set) var streak = 0
     private var maxPossible = 0
     private var nextSpawn = 1.2
+    private(set) var stunnedUntil = -1.0
+    var isStunned: Bool { elapsed < stunnedUntil }
 
     override func didStart() {
         setHUD("👾 45s · 0 pts")
@@ -32,12 +34,12 @@ final class LaserEngine: MiniEngine {
     override func tick(dt: Double) {
         let remaining = Self.duration - elapsed
         if remaining <= 0 {
-            finish(points: score, maxPoints: max(maxPossible, 10))
+            finish(points: min(score, max(maxPossible, 10)), maxPoints: max(maxPossible, 10))
             return
         }
-        // alvo verde que apagou sozinho quebra o combo
+        // alvo verde COMUM que apagou sozinho quebra o combo (dourado não pune)
         let expired = targets.filter { elapsed - $0.born > $0.life }
-        if expired.contains(where: { !$0.isRed }) { streak = 0 }
+        if expired.contains(where: { !$0.isRed && !$0.isGold }) { streak = 0 }
         targets.removeAll { elapsed - $0.born > $0.life }
 
         if elapsed >= nextSpawn {
@@ -49,8 +51,9 @@ final class LaserEngine: MiniEngine {
                 let isRed = Double.random(in: 0...1) < 0.25
                 let isGold = !isRed && Double.random(in: 0...1) < 0.09
                 if !isRed { maxPossible += isGold ? 25 : 10 }
+                // dourado: vida FIXA de 1.0s — sempre alcançável por reflexo humano
                 targets.append(Target(spot: spot, isRed: isRed, isGold: isGold, born: elapsed,
-                                      life: (1.6 - 0.85 * difficulty) * (isGold ? 0.55 : 1)))
+                                      life: isGold ? 1.0 : 1.6 - 0.85 * difficulty))
             }
         }
         let comboTxt = streak >= 3 ? " x\(streak)" : ""
@@ -58,7 +61,7 @@ final class LaserEngine: MiniEngine {
     }
 
     override func tap(at p: CGPoint) {
-        guard !finished, viewSize != .zero else { return }
+        guard !finished, !isStunned, viewSize != .zero else { return }
         let radius = min(viewSize.width, viewSize.height) * 0.09
         for (i, t) in targets.enumerated() {
             let c = spotCenter(t.spot, size: viewSize)
@@ -67,7 +70,8 @@ final class LaserEngine: MiniEngine {
                 if t.isRed {
                     score = max(0, score - 10)
                     streak = 0
-                    say("🔴 Alvo proibido! -10")
+                    stunnedUntil = elapsed + 0.9   // laser trava: spam cego não compensa
+                    say("🔴 LASER TRAVADO! -10", for: 0.9)
                     Haptics.error()
                 } else if t.isGold {
                     streak += 1
@@ -164,6 +168,12 @@ enum LaserPainter {
                         startAngle: .degrees(-90),
                         endAngle: .degrees(-90 + 360 * (1 - progress)), clockwise: false)
             ctx.stroke(ring, with: .color(Theme.creme), style: StrokeStyle(lineWidth: 3, lineCap: .round))
+        }
+
+        // laser travado: tela avermelhada
+        if e.isStunned {
+            ctx.fill(Path(CGRect(origin: .zero, size: size)),
+                     with: .color(Color(hex: 0xE8503A).opacity(0.12)))
         }
 
         GamePaint.timeBar(&ctx, size: size, remaining: LaserEngine.duration - e.elapsed,
